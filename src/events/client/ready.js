@@ -1,10 +1,10 @@
-// /home/user/projects/evi/src/events/client/ready.js
+const { updatePresence } = require('../../utils/presenceUpdater');
+
 module.exports = {
-    name: 'ready',
-    once: true,
-    execute(client) {
-      console.log(`Logged in as ${client.user.tag}`);
-      // Perform additional setup or tasks on startup
-    },
-  };
-  
+  name: 'ready',
+  once: true,
+  async execute(client) {
+    console.log(`Logged in as ${client.user.tag}`);
+    await updatePresence(client);
+  },
+};

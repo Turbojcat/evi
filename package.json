@@ -2,8 +2,10 @@
   "dependencies": {
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.4.0",
+    "fs": "^0.0.1-security",
     "mysql2": "^3.9.7",
+    "node-cron": "^3.0.3",
+    "path": "^0.12.7",
     "sequelize": "^6.37.3",
     "winston": "^3.13.0"
   },
@@ -12,9 +14,10 @@
   "description": "Evi is an advanced Discord bot with a wide range of features and commands.",
   "main": "index.js",
   "scripts": {
+    "start": "node src/evi.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ronny",
   "license": "ISC"
 }
