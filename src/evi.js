@@ -25,6 +25,7 @@ client.cooldowns = new Collection();
 (async () => {
   try {
     await connectDatabase();
+    await syncDatabase();
     await loadCommands(client.commands);
     await loadEvents(client);
     await registerSlashCommands(client);
