@@ -8,6 +8,6 @@ module.exports = {
   DB_USER: process.env.DB_USER,
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_NAME: process.env.DB_NAME,
-  CLIENT_ID: '1241047734644113489',
-  GUILD_ID: '954350465494155284',
+  CLIENT_ID: process.env.CLIENT_ID,
+  GUILD_ID: process.env.GUILD_ID,
 };
