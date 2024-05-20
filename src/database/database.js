@@ -1,28 +1,22 @@
-// src/database/database.js
-const Sequelize = require('sequelize');
-const config = require('../config');
+const mysql = require('mysql2/promise');
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
 
-const sequelize = new Sequelize(
-  config.DATABASE.database,
-  config.DATABASE.username,
-  config.DATABASE.password,
-  {
-    host: config.DATABASE.host,
-    port: config.DATABASE.port,
-    dialect: 'mysql',
-  }
-);
-
-async function syncDatabase() {
+async function connectDatabase() {
   try {
-    await sequelize.sync({ force: true });
-    console.log('Databasen er synkronisert');
+    const connection = await mysql.createConnection({
+      host: DB_HOST,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      database: DB_NAME,
+    });
+    console.log('Connected to the MySQL database');
+    return connection;
   } catch (error) {
-    console.error('Feil ved synkronisering av databasen:', error);
+    console.error('Error connecting to the MySQL database:', error);
+    process.exit(1);
   }
 }
 
 module.exports = {
-  sequelize,
-  syncDatabase,
+  connectDatabase,
 };

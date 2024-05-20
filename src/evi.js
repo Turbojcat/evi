@@ -1,8 +1,8 @@
 // Import necessary modules from the discord.js library
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 
-// Import token and database configuration from the config file
-const { TOKEN, DATABASE_CONFIG } = require('./config');
+// Import token from the config file
+const { TOKEN } = require('./config');
 
 // Import utility functions from the handlers files
 const { loadCommands } = require('./handlers/commandHandler');
@@ -10,13 +10,10 @@ const { loadEvents } = require('./handlers/eventHandler');
 const { registerSlashCommands } = require('./handlers/slashCommandHandler');
 
 // Import the database connection function from the database file
-const { connectDatabase } = require('./database');
+const { connectDatabase } = require('./database/database');
 
 // Import the permission system setup function from the permissionSystem file
 const { setupPermissionSystem } = require('./utils/permissionSystem');
-
-// Import the logging initialization function from the logging file
-const { initializeLogging } = require('./utils/logging');
 
 // Import the job scheduling function from the jobs file
 const { scheduleJobs } = require('./jobs');
@@ -41,11 +38,8 @@ client.cooldowns = new Collection();
 // Use an immediately invoked async function to start the bot
 (async () => {
   try {
-    // Initialize the logging system
-    initializeLogging();
-
-    // Connect to the database using the provided configuration
-    await connectDatabase(DATABASE_CONFIG);
+    // Connect to the database
+    await connectDatabase();
 
     // Load the command files and set them in the client's commands collection
     await loadCommands(client.commands);

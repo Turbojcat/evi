@@ -1,14 +1,22 @@
-require('dotenv').config();
+const mysql = require('mysql2/promise');
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
+
+async function connectDatabase() {
+  try {
+    const connection = await mysql.createConnection({
+      host: DB_HOST,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      database: DB_NAME,
+    });
+    console.log('Connected to the MySQL database');
+    return connection;
+  } catch (error) {
+    console.error('Error connecting to the MySQL database:', error);
+    process.exit(1);
+  }
+}
 
 module.exports = {
-  PREFIX: process.env.PREFIX,
-  OWNER_ID: process.env.OWNER_ID,
-  TOKEN: process.env.DISCORD_TOKEN,
-  DATABASE: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-  },
+  connectDatabase,
 };

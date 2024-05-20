@@ -6,7 +6,7 @@ function initializeLogging() {
     format: winston.format.combine(
       winston.format.timestamp(),
       winston.format.printf(({ level, message, timestamp }) => {
-        return `[${timestamp}] ${level.toUpperCase()}: ${message}`;
+        return `${timestamp} [${level.toUpperCase()}]: ${message}`;
       })
     ),
     transports: [
@@ -16,7 +16,10 @@ function initializeLogging() {
     ],
   });
 
-  winston.add(logger);
+  // Legg til en global logger for bruk i andre filer
+  global.logger = logger;
+
+  logger.info('Logging system initialized');
 }
 
 module.exports = {
