@@ -1,23 +1,21 @@
-const { Sequelize } = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 
-async function connectDatabase(config) {
-  const sequelize = new Sequelize(config.database, config.username, config.password, {
-    host: config.host,
-    port: config.port,
-    dialect: 'mysql',
-    logging: false,
-  });
+function loadCommands(client) {
+  const commandsPath = path.join(__dirname, '..', 'commands');
+  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-  try {
-    await sequelize.authenticate();
-    console.log('Connected to the database');
-    return sequelize;
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-    process.exit(1);
+  for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+    if ('data' in command && 'execute' in command) {
+      client.commands.set(command.data.name, command);
+    } else {
+      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+    }
   }
 }
 
 module.exports = {
-  connectDatabase,
+  loadCommands,
 };

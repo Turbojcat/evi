@@ -2,27 +2,32 @@ const fs = require('fs');
 const path = require('path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { CLIENT_ID, GUILD_ID, TOKEN } = require('../config');
+const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = require('../config');
 
-async function registerSlashCommands(client) {
-  const commands = [];
-  const commandsPath = path.join(__dirname, '..', 'commands');
-  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+function loadSlashCommands() {
+  const slashCommandsPath = path.join(__dirname, '..', 'slashCommands');
+  const slashCommandFiles = fs.readdirSync(slashCommandsPath).filter(file => file.endsWith('.js'));
 
-  for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
+  const slashCommands = [];
+
+  for (const file of slashCommandFiles) {
+    const filePath = path.join(slashCommandsPath, file);
     const command = require(filePath);
-    commands.push(command.data.toJSON());
+    slashCommands.push(command.data.toJSON());
   }
 
-  const rest = new REST({ version: '9' }).setToken(TOKEN);
+  return slashCommands;
+}
+
+async function registerSlashCommands(client) {
+  const rest = new REST({ version: '9' }).setToken(DISCORD_TOKEN);
 
   try {
     console.log('Started refreshing application (/) commands.');
 
     await rest.put(
       Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
-      { body: commands },
+      { body: loadSlashCommands() },
     );
 
     console.log('Successfully reloaded application (/) commands.');
@@ -32,5 +37,6 @@ async function registerSlashCommands(client) {
 }
 
 module.exports = {
+  loadSlashCommands,
   registerSlashCommands,
 };
