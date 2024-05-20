@@ -12,13 +12,12 @@ module.exports = {
 
     if (!command) return;
 
-    if (command.executePrefix) {
-      try {
-        await command.executePrefix(message, args);
-      } catch (error) {
-        console.error(error);
-        await message.reply('There was an error while executing this command!');
-      }
+    try {
+      const latency = message.client.ws.ping;
+      await message.reply(`Pong! Latency: ${latency}ms`);
+    } catch (error) {
+      console.error(error);
+      await message.reply('There was an error while executing this command!');
     }
   },
 };

@@ -40,8 +40,4 @@ module.exports = {
       await interaction.reply(`Pong! Latency: ${latency}ms`);
     }
   },
-  async executePrefix(message, args) {
-    const latency = message.client.ws.ping;
-    await message.reply(`Pong! Latency: ${latency}ms`);
-  },
 };
