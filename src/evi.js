@@ -13,6 +13,10 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildPresences,
   ],
+  restGlobalRateLimit: 50,
+  restTimeOffset: 0,
+  restRequestTimeout: 15000,
+  GUILD_COMMAND_TIMEOUT: 3000,
 });
 
 client.commands = new Collection();
