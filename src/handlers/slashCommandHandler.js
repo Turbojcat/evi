@@ -28,7 +28,7 @@ async function findSlashCommandFiles(directory) {
   await traverseDirectory(directory);
   
   // Add the /help command
-  slashCommands.push(require('../commands/utility/help').data.toJSON());
+  
 
   return slashCommands;
 }
@@ -40,6 +40,18 @@ async function registerSlashCommands(client) {
     console.log('Started refreshing application (/) commands.');
 
     const slashCommands = await findSlashCommandFiles(path.join(__dirname, '..'));
+
+    // Log the names of the slash commands
+    console.log('Slash command names:', slashCommands.map(command => command.name));
+
+    // Check for duplicate slash command names
+    const commandNames = slashCommands.map(command => command.name);
+    const duplicateCommands = commandNames.filter((name, index) => commandNames.indexOf(name) !== index);
+
+    if (duplicateCommands.length > 0) {
+      console.error('Duplicate slash commands found:', duplicateCommands);
+      return;
+    }
 
     await rest.put(
       Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
