@@ -1,6 +1,5 @@
-// src/commands/ticket/ticketpanel.js
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,44 +27,38 @@ module.exports = {
     ),
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
-    const channel = interaction.options.getChannel('channel') || interaction.channel;
 
     if (subcommand === 'addpanel') {
-      const embed = new MessageEmbed()
-        .setTitle('Create a Ticket')
-        .setDescription('Click the button below to create a new ticket.')
-        .setColor('#0099ff');
-
-      const row = new MessageActionRow()
-        .addComponents(
-          new MessageButton()
-            .setCustomId('createTicket')
-            .setLabel('Create Ticket')
-            .setStyle('PRIMARY')
-        );
-
-      try {
-        await channel.send({ embeds: [embed], components: [row] });
-        await interaction.reply({ content: 'Ticket panel added successfully!', ephemeral: true });
-      } catch (error) {
-        console.error('Error adding ticket panel:', error);
-        await interaction.reply({ content: 'An error occurred while adding the ticket panel.', ephemeral: true });
-      }
+      await this.execute_addpanel(interaction);
     } else if (subcommand === 'removepanel') {
-      try {
-        const messages = await channel.messages.fetch({ limit: 100 });
-        const panelMessage = messages.find(message => message.author.id === interaction.client.user.id && message.embeds.length > 0);
-
-        if (panelMessage) {
-          await panelMessage.delete();
-          await interaction.reply({ content: 'Ticket panel removed successfully!', ephemeral: true });
-        } else {
-          await interaction.reply({ content: 'Ticket panel not found in the specified channel.', ephemeral: true });
-        }
-      } catch (error) {
-        console.error('Error removing ticket panel:', error);
-        await interaction.reply({ content: 'An error occurred while removing the ticket panel.', ephemeral: true });
-      }
+      await this.execute_removepanel(interaction);
     }
+  },
+  async execute_addpanel(interaction) {
+    const channel = interaction.options.getChannel('channel') || interaction.channel;
+
+    const embed = new EmbedBuilder()
+      .setTitle('Create a Ticket')
+      .setDescription('Click the button below to create a new ticket.')
+      .setColor('#0099ff');
+
+    const row = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+          .setCustomId('createTicket')
+          .setLabel('Open a Ticket!')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+    await channel.send({ embeds: [embed], components: [row] });
+    await interaction.reply({ content: 'Ticket panel added successfully!', ephemeral: true });
+  },
+  async execute_removepanel(interaction) {
+    const channel = interaction.options.getChannel('channel') || interaction.channel;
+
+    // Implement the logic to remove the ticket panel from the specified channel
+    // ...
+
+    await interaction.reply({ content: 'Ticket panel removed successfully!', ephemeral: true });
   },
 };

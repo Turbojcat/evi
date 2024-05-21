@@ -1,3 +1,5 @@
+const { executeCommand } = require('../../handlers/commandHandler');
+
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction) {
@@ -5,13 +7,21 @@ module.exports = {
 
     const command = interaction.client.commands.get(interaction.commandName);
 
-    if (!command) return;
+    if (!command) {
+      console.error(`[ERROR] No command matching "${interaction.commandName}" was found.`);
+      return;
+    }
 
     try {
-      await command.execute(interaction);
+      await executeCommand(interaction);
     } catch (error) {
-      console.error(error);
-      await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      console.error(`[ERROR] Error executing command "${command.data.name}":`, error);
+
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+      } else {
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      }
     }
   },
-};
+}

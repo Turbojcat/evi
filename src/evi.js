@@ -53,7 +53,7 @@ client.cooldowns = new Collection();
     await syncDatabase();
 
     // Load the command files and set them in the client's commands collection
-    await loadCommands(client.commands);
+    await loadCommands(client);
 
     // Load the event files and register them as event listeners on the client
     await loadEvents(client);
