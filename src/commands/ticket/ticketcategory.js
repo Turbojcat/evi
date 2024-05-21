@@ -1,6 +1,29 @@
+const fs = require('fs').promises;
+const path = require('path');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { TicketCategory } = require('../../database/database');
 const { ChannelType } = require('discord.js');
+
+const ticketCategoryFile = path.join(__dirname, '..', '..', 'data', 'ticketCategory.json');
+
+async function saveTicketCategory(ticketCategory) {
+  await fs.writeFile(ticketCategoryFile, JSON.stringify(ticketCategory, null, 2));
+}
+
+async function loadTicketCategory() {
+  try {
+    const data = await fs.readFile(ticketCategoryFile, 'utf8');
+    if (data.trim() === '') {
+      return null;
+    }
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return null;
+    }
+    throw error;
+  }
+}
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -44,8 +67,14 @@ module.exports = {
       }
 
       // Create a new ticket category
-      const createdCategory = await TicketCategory.create({ categoryId: category.id });
+      const createdCategory = await TicketCategory.create({
+        categoryId: category.id,
+        name: category.name,
+      });
       console.log('Created ticket category:', createdCategory);
+
+      // Save the ticket category to the JSON file
+      await saveTicketCategory(createdCategory);
 
       await interaction.reply({ content: 'Ticket category added successfully!', ephemeral: true });
     } catch (error) {
@@ -66,10 +95,14 @@ module.exports = {
       // Remove the ticket category
       await existingCategory.destroy();
 
+      // Remove the ticket category from the JSON file
+      await saveTicketCategory(null);
+
       await interaction.reply({ content: 'Ticket category removed successfully!', ephemeral: true });
     } catch (error) {
       console.error('Error removing ticket category:', error);
       await interaction.reply({ content: 'An error occurred while removing the ticket category.', ephemeral: true });
     }
   },
+  loadTicketCategory,
 };

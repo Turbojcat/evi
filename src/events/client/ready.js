@@ -1,13 +1,19 @@
-//const { updatePresence } = require('../../utils/presenceUpdater');
+const { loadTicketCategory } = require('../../commands/ticket/ticketcategory');
+
 module.exports = {
   name: 'ready',
   once: true,
-  execute(client) {
+  async execute(client) {
     console.log(`Ready! Logged in as ${client.user.tag}`);
 
-    // Set the client user's presence
-    client.user.setPresence({ activities: [{ name: 'Alpha sil in DEV Mode!' }], status: 'online' });
+    // Load the ticket category from the JSON file
+    const ticketCategory = await loadTicketCategory();
+    if (ticketCategory) {
+      console.log('Loaded ticket category from file:', ticketCategory);
+      // Perform any necessary actions with the loaded ticket category
+    }
 
-    // You can add any other initialization or setup code for your bot here
+    // Set the client user's presence
+    client.user.setPresence({ activities: [{ name: 'Evi Alpha DEV Mode!' }], status: 'online' });
   },
 };
