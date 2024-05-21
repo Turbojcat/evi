@@ -41,7 +41,7 @@ client.commands = new Collection();
 client.cooldowns = new Collection();
 
 // Use an immediately invoked async function to start the bot
-(async () => {
+async function startBot() {
   try {
     // Initialize the logging system
     initializeLogging();
@@ -74,4 +74,6 @@ client.cooldowns = new Collection();
     console.error('Error during bot startup:', error);
     process.exit(1);
   }
-})();
+}
+
+startBot();

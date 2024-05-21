@@ -1,63 +1,92 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { Ticket, TicketQuestion } = require('../../database/database');
+const { Ticket, TicketQuestion, TicketCategory } = require('../../database/database');
 
 module.exports = {
   name: 'interactionCreate',
   async execute(interaction) {
-    if (!interaction.isButton()) return;
+    if (!interaction.isButton() || interaction.customId !== 'createTicket') return;
 
-    const { customId } = interaction;
+    const { guild, member } = interaction;
 
-    if (customId === 'createTicket') {
-      const guild = interaction.guild;
-      const creator = interaction.user;
+    try {
+      // Fetch the ticket category from the database
+      const ticketCategory = await TicketCategory.findOne();
 
-      try {
-        const ticket = await Ticket.create({
-          guildId: guild.id,
-          creatorId: creator.id,
-          status: 'open',
-        });
-
-        const ticketChannel = await guild.channels.create(`ticket-${ticket.id}`, {
-          type: 'text',
-          topic: `Ticket created by ${creator.tag}`,
-          permissionOverwrites: [
-            {
-              id: guild.id,
-              deny: ['VIEW_CHANNEL'],
-            },
-            {
-              id: creator.id,
-              allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
-            },
-          ],
-        });
-
-        const questions = await TicketQuestion.findAll();
-
-        const embed = new MessageEmbed()
-          .setTitle('Ticket Questions')
-          .setDescription('Please answer the following questions:')
-          .setColor('#0099ff');
-
-        questions.forEach((question, index) => {
-          embed.addField(`Question ${index + 1}`, question.question);
-        });
-
-        await ticketChannel.send({ embeds: [embed] });
-
+      if (!ticketCategory) {
         await interaction.reply({
-          content: `Your ticket has been created in ${ticketChannel}`,
+          content: 'No ticket category has been set up. Please contact an administrator.',
           ephemeral: true,
         });
-      } catch (error) {
-        console.error('Error creating ticket:', error);
-        await interaction.reply({
-          content: 'An error occurred while creating the ticket.',
-          ephemeral: true,
-        });
+        return;
       }
+
+      // Find the category channel by ID
+      const categoryChannel = guild.channels.cache.get(ticketCategory.categoryId);
+
+      if (!categoryChannel) {
+        await interaction.reply({
+          content: 'The specified ticket category does not exist. Please contact an administrator.',
+          ephemeral: true,
+        });
+        return;
+      }
+
+      // Create a new ticket channel in the specified category
+      const ticketChannel = await categoryChannel.createChannel(`ticket-${member.user.username}`, {
+        type: 'GUILD_TEXT',
+        topic: `Ticket created by ${member.user.tag}`,
+        permissionOverwrites: [
+          {
+            id: guild.id,
+            deny: ['VIEW_CHANNEL'],
+          },
+          {
+            id: member.id,
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+          },
+        ],
+      });
+
+      // Create a new ticket in the database
+      const ticket = await Ticket.create({
+        guildId: guild.id,
+        userId: member.id,
+        channelId: ticketChannel.id,
+        status: 'open',
+      });
+
+      // Fetch ticket questions from the database
+      const questions = await TicketQuestion.findAll();
+
+      // Create an embed with ticket questions
+      const embed = new MessageEmbed()
+        .setTitle('Ticket Questions')
+        .setDescription('Please answer the following questions:')
+        .setColor('#0099ff')
+        .setFooter({
+          text: `Ticket created by ${member.user.tag} (ID: ${member.id})`,
+          iconURL: member.user.displayAvatarURL(),
+        })
+        .setTimestamp();
+
+      questions.forEach((question, index) => {
+        embed.addField(`Question ${index + 1}`, question.question);
+      });
+
+      // Send the embed to the ticket channel
+      await ticketChannel.send({ embeds: [embed] });
+
+      // Reply to the interaction
+      await interaction.reply({
+        content: `Your ticket has been created: ${ticketChannel}`,
+        ephemeral: true,
+      });
+    } catch (error) {
+      console.error('Error creating ticket:', error);
+      await interaction.reply({
+        content: 'An error occurred while creating the ticket.',
+        ephemeral: true,
+      });
     }
   },
 };

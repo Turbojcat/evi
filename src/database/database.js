@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const mysql = require('mysql2/promise');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
 
@@ -14,6 +14,7 @@ const models = {
   TicketStaffRole: require('./models/TicketStaffRole')(sequelize),
   TicketLog: require('./models/TicketLog')(sequelize),
   TicketTranscript: require('./models/TicketTranscript')(sequelize),
+  TicketCategory: require('./models/TicketCategory')(sequelize, DataTypes),
   // Add more models as needed
 };
 
@@ -26,6 +27,7 @@ models.Ticket.hasMany(models.TicketLog);
 models.TicketLog.belongsTo(models.Ticket);
 models.Ticket.hasOne(models.TicketTranscript);
 models.TicketTranscript.belongsTo(models.Ticket);
+
 
 async function connectDatabase() {
   try {
