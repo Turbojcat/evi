@@ -1,8 +1,8 @@
-// src/events/client/error.js
 const config = require('../../config');
 
 module.exports = {
   name: 'error',
+  data: {},
   execute(error, client) {
     console.error('Botfeil:', error);
 

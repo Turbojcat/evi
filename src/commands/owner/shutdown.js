@@ -1,9 +1,9 @@
-// src/commands/owner/shutdown.js
 const config = require('../../config');
 
 module.exports = {
   name: 'shutdown',
   description: 'Slår av boten (bare tilgjengelig for boteieren)',
+  data: {},
   execute(message) {
     if (message.author.id !== config.OWNER_ID) {
       return message.reply('Du har ikke tillatelse til å utføre denne kommandoen.');

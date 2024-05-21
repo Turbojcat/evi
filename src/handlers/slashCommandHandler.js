@@ -19,7 +19,7 @@ async function findSlashCommandFiles(directory) {
       } else if (file.endsWith('.js')) {
         const command = require(filePath);
         if ('data' in command && 'execute' in command) {
-          slashCommands.push(command.data.toJSON());
+          slashCommands.push(command.data);
         }
       }
     }
@@ -28,7 +28,7 @@ async function findSlashCommandFiles(directory) {
   await traverseDirectory(directory);
   
   // Add the /help command
-  
+  slashCommands.push(require('../commands/utility/help').data);
 
   return slashCommands;
 }

@@ -39,7 +39,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle('**Create a Ticket**')
-      .setFooter(`Support for ${client.user.tag} at **!support**`)
+      .setFooter(`Support for ${interaction.client.user.tag} at **!support**`)
       .setDescription('Click the button below to create a new ticket.')
       .setColor('#0099ff');
       
