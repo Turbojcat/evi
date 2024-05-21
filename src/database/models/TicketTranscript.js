@@ -8,10 +8,6 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    ticketId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     transcript: {
       type: DataTypes.TEXT,
       allowNull: false,

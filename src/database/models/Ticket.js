@@ -1,5 +1,6 @@
 // src/database/models/Ticket.js
 const { DataTypes } = require('sequelize');
+const { sequelize } = require('../database');
 
 module.exports = (sequelize) => {
   const Ticket = sequelize.define('Ticket', {
@@ -19,6 +20,10 @@ module.exports = (sequelize) => {
     closed: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    status: {
+      type: DataTypes.ENUM('open', 'closed'),
+      defaultValue: 'open',
     },
     // Add more fields as needed
   });

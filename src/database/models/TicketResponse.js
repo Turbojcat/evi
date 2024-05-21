@@ -8,16 +8,8 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    ticketId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     questionId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    response: {
-      type: DataTypes.STRING,
       allowNull: false,
     },
     // Add more fields as needed
