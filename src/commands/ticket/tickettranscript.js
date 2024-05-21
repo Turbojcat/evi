@@ -1,5 +1,6 @@
 // src/commands/ticket/tickettranscript.js
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { TicketTranscript } = require('../../database/database');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,34 +8,76 @@ module.exports = {
     .setDescription('Manages ticket transcript channels')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('add')
-        .setDescription('Adds a transcript channel for closed tickets')
+        .setName('set')
+        .setDescription('Sets the ticket transcript channel')
         .addChannelOption(option =>
           option.setName('channel')
-            .setDescription('The channel to add as a transcript channel')
+            .setDescription('The channel to set as the ticket transcript channel')
             .setRequired(true)
         )
     )
     .addSubcommand(subcommand =>
       subcommand
         .setName('remove')
-        .setDescription('Removes a transcript channel for closed tickets')
-        .addChannelOption(option =>
-          option.setName('channel')
-            .setDescription('The channel to remove as a transcript channel')
-            .setRequired(true)
-        )
+        .setDescription('Removes the ticket transcript channel')
     ),
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
-    const channel = interaction.options.getChannel('channel');
+    const guild = interaction.guild;
 
-    if (subcommand === 'add') {
-      // Code to add the transcript channel to the ticket system
-      // ...
+    if (subcommand === 'set') {
+      const channel = interaction.options.getChannel('channel');
+
+      try {
+        const existingTranscript = await TicketTranscript.findOne({
+          where: { guildId: guild.id },
+        });
+
+        if (existingTranscript) {
+          await existingTranscript.update({ channelId: channel.id });
+        } else {
+          await TicketTranscript.create({
+            guildId: guild.id,
+            channelId: channel.id,
+          });
+        }
+
+        await interaction.reply({
+          content: `Ticket transcript channel set to ${channel}`,
+          ephemeral: true,
+        });
+      } catch (error) {
+        console.error('Error setting ticket transcript channel:', error);
+        await interaction.reply({
+          content: 'An error occurred while setting the ticket transcript channel.',
+          ephemeral: true,
+        });
+      }
     } else if (subcommand === 'remove') {
-      // Code to remove the transcript channel from the ticket system
-      // ...
+      try {
+        const existingTranscript = await TicketTranscript.findOne({
+          where: { guildId: guild.id },
+        });
+
+        if (existingTranscript) {
+          await existingTranscript.destroy();
+          await interaction.reply({
+            content: 'Ticket transcript channel removed successfully.',
+            ephemeral: true,
+          });
+        } else {
+          await interaction.reply({
+            content: 'No ticket transcript channel is currently set.',
+            ephemeral: true,
+          });
+        }
+      } catch (error) {
+        console.error('Error removing ticket transcript channel:', error);
+        await interaction.reply({
+          content: 'An error occurred while removing the ticket transcript channel.',
+          ephemeral: true,
+        });
+      }
     }
   },
 };

@@ -1,6 +1,7 @@
 // src/commands/ticket/ticketinfo.js
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+const { Ticket } = require('../../database/database');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,15 +9,31 @@ module.exports = {
     .setDescription('Displays ticket information for the user'),
   async execute(interaction) {
     const userId = interaction.user.id;
-    // Code to retrieve ticket information for the user from the database
-    // ...
 
-    const embed = new MessageEmbed()
-      .setTitle('Ticket Information')
-      .setDescription(`Ticket information for <@${userId}>`)
-      // Add fields for claimed tickets, assisted tickets, successful tickets, etc.
-      // ...
+    try {
+      const tickets = await Ticket.findAll({
+        where: { creatorId: userId },
+      });
 
-    await interaction.reply({ embeds: [embed] });
+      const totalTickets = tickets.length;
+      const openTickets = tickets.filter(ticket => ticket.status === 'open').length;
+      const closedTickets = tickets.filter(ticket => ticket.status === 'closed').length;
+
+      const embed = new MessageEmbed()
+        .setTitle('Ticket Information')
+        .setDescription(`Ticket information for <@${userId}>`)
+        .addField('Total Tickets', totalTickets)
+        .addField('Open Tickets', openTickets)
+        .addField('Closed Tickets', closedTickets)
+        .setColor('#0099ff');
+
+      await interaction.reply({ embeds: [embed] });
+    } catch (error) {
+      console.error('Error retrieving ticket information:', error);
+      await interaction.reply({
+        content: 'An error occurred while retrieving ticket information.',
+        ephemeral: true,
+      });
+    }
   },
 };
