@@ -12,6 +12,15 @@ const { registerSlashCommands } = require('./handlers/slashCommandHandler');
 // Import the database connection and sync functions from the database file
 const { connectDatabase, syncDatabase } = require('./database/database');
 
+// Import the permission system setup function from the permissionSystem file
+const { setupPermissionSystem } = require('./utils/permissionSystem');
+
+// Import the logging initialization function from the logging file
+const { initializeLogging } = require('./utils/logging');
+
+// Import the job scheduling function from the jobs file
+const { scheduleJobs } = require('./jobs');
+
 // Create a new Discord client instance with the specified intents
 const client = new Client({
   intents: [
@@ -34,6 +43,9 @@ client.cooldowns = new Collection();
 // Use an immediately invoked async function to start the bot
 (async () => {
   try {
+    // Initialize the logging system
+    initializeLogging();
+
     // Connect to the database
     await connectDatabase();
 
@@ -48,6 +60,12 @@ client.cooldowns = new Collection();
 
     // Register the slash commands with the Discord application
     await registerSlashCommands(client);
+
+    // Set up the permission system for the bot
+    await setupPermissionSystem(client);
+
+    // Schedule any necessary jobs or tasks
+    await scheduleJobs(client);
 
     // Log in to the Discord client using the provided token
     await client.login(TOKEN);
