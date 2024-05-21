@@ -13,8 +13,7 @@ module.exports = {
     if (!command) return;
 
     try {
-      const latency = message.client.ws.ping;
-      await message.reply(`Pong! Latency: ${latency}ms`);
+      await command.execute(message, args);
     } catch (error) {
       console.error(error);
       await message.reply('There was an error while executing this command!');
