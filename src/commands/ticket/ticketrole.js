@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Manages ticket staff roles')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('add')
+        .setName('addrole')
         .setDescription('Adds a staff role to the ticket system')
         .addRoleOption(option =>
           option.setName('role')
@@ -18,7 +18,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand
-        .setName('remove')
+        .setName('removerole')
         .setDescription('Removes a staff role from the ticket system')
         .addRoleOption(option =>
           option.setName('role')

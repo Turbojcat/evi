@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Manages ticket log channels')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('set')
+        .setName('setlog')
         .setDescription('Sets the ticket log channel')
         .addChannelOption(option =>
           option.setName('channel')
@@ -18,7 +18,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand
-        .setName('remove')
+        .setName('removelog')
         .setDescription('Removes the ticket log channel')
     ),
   async execute(interaction) {

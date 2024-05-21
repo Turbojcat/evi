@@ -26,6 +26,10 @@ async function findSlashCommandFiles(directory) {
   }
 
   await traverseDirectory(directory);
+  
+  // Add the /help command
+  slashCommands.push(require('../commands/utility/help').data.toJSON());
+
   return slashCommands;
 }
 

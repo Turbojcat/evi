@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Manages ticket questions')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('add')
+        .setName('addquestion')
         .setDescription('Adds a question to the ticket system')
         .addStringOption(option =>
           option.setName('question')
@@ -18,7 +18,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand
-        .setName('remove')
+        .setName('removequestion')
         .setDescription('Removes a question from the ticket system')
         .addStringOption(option =>
           option.setName('question')

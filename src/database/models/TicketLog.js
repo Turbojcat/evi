@@ -1,4 +1,3 @@
-// src/database/models/TicketLog.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -8,11 +7,14 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
+    guildId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     action: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // Add more fields as needed
   });
 
   return TicketLog;

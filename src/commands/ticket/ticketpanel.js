@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Manages the ticket panel')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('add')
+        .setName('addpanel')
         .setDescription('Adds a ticket panel to the specified channel')
         .addChannelOption(option =>
           option.setName('channel')
@@ -18,7 +18,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand
-        .setName('remove')
+        .setName('removepanel')
         .setDescription('Removes the ticket panel from the specified channel')
         .addChannelOption(option =>
           option.setName('channel')

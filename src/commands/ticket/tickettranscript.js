@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Manages ticket transcript channels')
     .addSubcommand(subcommand =>
       subcommand
-        .setName('set')
+        .setName('settranscript')
         .setDescription('Sets the ticket transcript channel')
         .addChannelOption(option =>
           option.setName('channel')
@@ -18,7 +18,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand
-        .setName('remove')
+        .setName('removetranscript')
         .setDescription('Removes the ticket transcript channel')
     ),
   async execute(interaction) {
