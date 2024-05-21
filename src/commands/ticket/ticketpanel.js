@@ -30,7 +30,7 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
     const channel = interaction.options.getChannel('channel') || interaction.channel;
 
-    if (subcommand === 'add') {
+    if (subcommand === 'addpanel') {
       const embed = new MessageEmbed()
         .setTitle('Create a Ticket')
         .setDescription('Click the button below to create a new ticket.')
@@ -51,7 +51,7 @@ module.exports = {
         console.error('Error adding ticket panel:', error);
         await interaction.reply({ content: 'An error occurred while adding the ticket panel.', ephemeral: true });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removepanel') {
       try {
         const messages = await channel.messages.fetch({ limit: 100 });
         const panelMessage = messages.find(message => message.author.id === interaction.client.user.id && message.embeds.length > 0);

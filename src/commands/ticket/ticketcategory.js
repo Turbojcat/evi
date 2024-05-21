@@ -31,7 +31,7 @@ module.exports = {
     const category = interaction.options.getString('category');
     const guildId = interaction.guild.id;
 
-    if (subcommand === 'add') {
+    if (subcommand === 'addcategory') {
       try {
         await TicketCategory.create({ guildId, category });
         await interaction.reply({ content: 'Category added successfully!', ephemeral: true });
@@ -39,7 +39,7 @@ module.exports = {
         console.error('Error adding category:', error);
         await interaction.reply({ content: 'An error occurred while adding the category.', ephemeral: true });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removecategory') {
       try {
         await TicketCategory.destroy({ where: { guildId, category } });
         await interaction.reply({ content: 'Category removed successfully!', ephemeral: true });

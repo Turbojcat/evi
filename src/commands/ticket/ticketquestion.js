@@ -31,7 +31,7 @@ module.exports = {
     const question = interaction.options.getString('question');
     const guildId = interaction.guild.id;
 
-    if (subcommand === 'add') {
+    if (subcommand === 'addquestion') {
       try {
         await TicketQuestion.create({ guildId, question });
         await interaction.reply({ content: 'Question added successfully!', ephemeral: true });
@@ -39,7 +39,7 @@ module.exports = {
         console.error('Error adding question:', error);
         await interaction.reply({ content: 'An error occurred while adding the question.', ephemeral: true });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removequestion') {
       try {
         await TicketQuestion.destroy({ where: { guildId, question } });
         await interaction.reply({ content: 'Question removed successfully!', ephemeral: true });

@@ -25,7 +25,7 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
 
-    if (subcommand === 'set') {
+    if (subcommand === 'setlog') {
       const channel = interaction.options.getChannel('channel');
 
       try {
@@ -53,7 +53,7 @@ module.exports = {
           ephemeral: true,
         });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removelog') {
       try {
         const existingLog = await TicketLog.findOne({
           where: { guildId: guild.id },

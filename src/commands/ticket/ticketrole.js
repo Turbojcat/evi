@@ -30,7 +30,7 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
     const role = interaction.options.getRole('role');
 
-    if (subcommand === 'add') {
+    if (subcommand === 'addrole') {
       const roleId = role.id;
 
       try {
@@ -40,7 +40,7 @@ module.exports = {
         console.error('Error adding staff role:', error);
         await interaction.reply({ content: 'An error occurred while adding the staff role.', ephemeral: true });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removerole') {
       const roleId = role.id;
 
       try {

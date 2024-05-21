@@ -25,7 +25,7 @@ module.exports = {
     const subcommand = interaction.options.getSubcommand();
     const guild = interaction.guild;
 
-    if (subcommand === 'set') {
+    if (subcommand === 'settranscript') {
       const channel = interaction.options.getChannel('channel');
 
       try {
@@ -53,7 +53,7 @@ module.exports = {
           ephemeral: true,
         });
       }
-    } else if (subcommand === 'remove') {
+    } else if (subcommand === 'removetranscript') {
       try {
         const existingTranscript = await TicketTranscript.findOne({
           where: { guildId: guild.id },
