@@ -38,9 +38,11 @@ module.exports = {
     const channel = interaction.options.getChannel('channel') || interaction.channel;
 
     const embed = new EmbedBuilder()
-      .setTitle('Create a Ticket')
+      .setTitle('**Create a Ticket**')
+      .setFooter(`Support for ${client.user.tag} at **!support**`)
       .setDescription('Click the button below to create a new ticket.')
       .setColor('#0099ff');
+      
 
     const row = new ActionRowBuilder()
       .addComponents(

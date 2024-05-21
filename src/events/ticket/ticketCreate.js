@@ -42,7 +42,7 @@ module.exports = {
           },
           {
             id: member.id,
-            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'MANAGE_CHANNELS', 'CREATE_INSTANT_INVITE'],
           },
         ],
       });
@@ -62,12 +62,7 @@ module.exports = {
       const embed = new MessageEmbed()
         .setTitle('Ticket Questions')
         .setDescription('Please answer the following questions:')
-        .setColor('#0099ff')
-        .setFooter({
-          text: `Ticket created by ${member.user.tag} (ID: ${member.id})`,
-          iconURL: member.user.displayAvatarURL(),
-        })
-        .setTimestamp();
+        .setColor('#0099ff');
 
       questions.forEach((question, index) => {
         embed.addField(`Question ${index + 1}`, question.question);
