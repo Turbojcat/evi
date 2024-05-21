@@ -15,6 +15,7 @@ const models = {
   TicketLog: require('./models/TicketLog')(sequelize),
   TicketTranscript: require('./models/TicketTranscript')(sequelize),
   TicketCategory: require('./models/TicketCategory')(sequelize, DataTypes),
+  PremiumUser: require('./models/PremiumUser')(sequelize),
   // Add more models as needed
 };
 

@@ -10,4 +10,5 @@ module.exports = {
   DB_NAME: process.env.DB_NAME,
   CLIENT_ID: process.env.CLIENT_ID,
   GUILD_ID: process.env.GUILD_ID,
+  PREMIUM_ROLE_ID: process.env.PREMIUM_ROLE_ID,
 };

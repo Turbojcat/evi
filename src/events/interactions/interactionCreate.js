@@ -1,4 +1,7 @@
+// src/events/interactions/interactionCreate.js
+
 const { executeCommand } = require('../../handlers/commandHandler');
+const { isPremiumUser } = require('../../utils/premium');
 
 module.exports = {
   name: 'interactionCreate',
@@ -9,6 +12,14 @@ module.exports = {
 
     if (!command) {
       console.error(`[ERROR] No command matching "${interaction.commandName}" was found.`);
+      return;
+    }
+
+    if (command.premium && !(await isPremiumUser(interaction.user.id))) {
+      await interaction.reply({
+        content: 'This command is only available for premium users.',
+        ephemeral: true,
+      });
       return;
     }
 
@@ -24,4 +35,4 @@ module.exports = {
       }
     }
   },
-}
+};
