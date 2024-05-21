@@ -1,6 +1,7 @@
 // Import the necessary modules
 const fs = require('fs');
 const path = require('path');
+const { TicketStaffRole } = require('../database/database');
 
 // Function to load command files from the 'commands' directory
 async function loadCommands(client) {
@@ -66,9 +67,41 @@ async function registerSlashCommands(client) {
   }
 }
 
+// Function to handle user logging
+async function handleUserLogging(client, interaction) {
+  // Implement the logic to log user actions based on the interaction
+  // Example: Log user messages, voice activity, etc.
+  console.log(`User ${interaction.user.tag} triggered an interaction.`);
+}
+
+// Function to handle staff logging
+async function handleStaffLogging(client, interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (isStaff) {
+    // Implement the logic to log staff actions based on the interaction
+    // Example: Log staff commands, moderation actions, etc.
+    console.log(`Staff member ${interaction.user.tag} triggered an interaction.`);
+  }
+}
+
+// Function to handle command logging
+async function handleCommandLogging(client, interaction) {
+  // Implement the logic to log all commands executed by users and staff
+  // Example: Log command names, arguments, user information, etc.
+  console.log(`Command ${interaction.commandName} executed by ${interaction.user.tag}.`);
+}
+
 // Export the functions for use in other files
 module.exports = {
   loadCommands,
   loadEvents,
   registerSlashCommands,
+  handleUserLogging,
+  handleStaffLogging,
+  handleCommandLogging,
 };

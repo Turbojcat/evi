@@ -21,31 +21,32 @@ module.exports = {
       }
 
       // Find the category channel by ID
-      const categoryChannel = guild.channels.cache.get(ticketCategory.categoryId);
+const categoryChannel = guild.channels.cache.get(ticketCategory.categoryId);
 
-      if (!categoryChannel) {
-        await interaction.reply({
-          content: 'The specified ticket category does not exist. Please contact an administrator.',
-          ephemeral: true,
-        });
-        return;
-      }
+if (!categoryChannel || categoryChannel.type !== 'GUILD_CATEGORY') {
+  await interaction.reply({
+    content: 'The specified ticket category is not a valid category channel. Please contact an administrator.',
+    ephemeral: true,
+  });
+  return;
+}
 
-      // Create a new ticket channel in the specified category
-      const ticketChannel = await categoryChannel.createChannel(`ticket-${member.user.username}`, {
-        type: 'GUILD_TEXT',
-        topic: `Ticket created by ${member.user.tag}`,
-        permissionOverwrites: [
-          {
-            id: guild.id,
-            deny: ['VIEW_CHANNEL'],
-          },
-          {
-            id: member.id,
-            allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'MANAGE_CHANNELS', 'CREATE_INSTANT_INVITE'],
-          },
-        ],
-      });
+// Create a new ticket channel in the specified category
+const ticketChannel = await guild.channels.create(`ticket-${member.user.username}`, {
+  type: 'GUILD_TEXT',
+  topic: `Ticket created by ${member.user.tag}`,
+  parent: categoryChannel,
+  permissionOverwrites: [
+    {
+      id: guild.id,
+      deny: ['VIEW_CHANNEL'],
+    },
+    {
+      id: member.id,
+      allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'MANAGE_CHANNELS', 'CREATE_INSTANT_INVITE'],
+    },
+  ],
+});
 
       // Create a new ticket in the database
       const ticket = await Ticket.create({

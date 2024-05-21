@@ -1,0 +1,423 @@
+Certainly! I'll add the staff role permission check to each of the mentioned files. Here's the updated code for each file:
+
+ticketcategory.js:
+
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { TicketStaffRole } = require('../../database/database');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    // ...
+    ,
+  async execute(interaction) {
+    const staffRoles = await TicketStaffRole.findAll({
+      where: { guildId: interaction.guild.id },
+    });
+
+    const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+    if (!isStaff) {
+      await interaction.reply({
+        content: 'You do not have permission to manage ticket categories.',
+        ephemeral: true,
+      });
+      return;
+    }
+
+    // Rest of the code...
+  },
+};
+
+
+
+ticketclaim.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to claim tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketexport.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to export tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketinfo.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to view ticket information.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketlog.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to manage ticket logs.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketmove.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to move tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketnotify.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to notify staff members.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketpanel.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to manage ticket panels.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketpriority.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to set ticket priorities.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketquestion.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to manage ticket questions.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketremove.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to remove users from tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketrename.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to rename tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketsearch.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to search tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketrole.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to manage ticket staff roles.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketstats.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to view ticket statistics.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+tickettranscript.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to manage ticket transcripts.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+ticketunclaim.js:
+
+// ...
+async execute(interaction) {
+  const staffRoles = await TicketStaffRole.findAll({
+    where: { guildId: interaction.guild.id },
+  });
+
+  const isStaff = staffRoles.some(role => interaction.member.roles.cache.has(role.roleId));
+
+  if (!isStaff) {
+    await interaction.reply({
+      content: 'You do not have permission to unclaim tickets.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Rest of the code...
+},
+// ...
+
+
+
+In each file, I added a check to verify if the user executing the command has a staff role. The TicketStaffRole model is used to retrieve the staff roles for the guild, and then it checks if the user has any of those roles using interaction.member.roles.cache.has(role.roleId).
+
+If the user does not have a staff role, an ephemeral reply is sent indicating that they do not have permission to perform the respective action.
+
+Make sure to update each file with the corresponding code snippet and ensure that the TicketStaffRole model is properly imported and configured in your project.
+
+Let me know if you have any further questions!
