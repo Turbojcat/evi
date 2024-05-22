@@ -50,17 +50,23 @@ async function executeCommand(interaction) {
   }
 
   try {
-    if (interaction.options.getSubcommand()) {
-      const subcommandName = interaction.options.getSubcommand();
-      const subcommandExecute = command[`execute_${subcommandName}`];
-
-      if (!subcommandExecute) {
-        console.error(`[ERROR] Subcommand "${subcommandName}" of command "${command.data.name}" is missing an execute function.`);
-        return;
+    if (interaction.isChatInputCommand()) {
+      if (command.data.options && command.data.options.some(option => option.type === 1)) {
+        const subcommand = interaction.options.getSubcommand(false);
+        if (subcommand) {
+          const subcommandFile = interaction.client.commands.get(`${interaction.commandName}-${subcommand}`);
+          if (subcommandFile) {
+            await subcommandFile.execute(interaction);
+          } else {
+            await interaction.reply({ content: 'Invalid subcommand.', ephemeral: true });
+          }
+        } else {
+          await command.execute(interaction);
+        }
+      } else {
+        await command.execute(interaction);
       }
-
-      await subcommandExecute(interaction);
-    } else {
+    } else if (interaction.isContextMenuCommand()) {
       await command.execute(interaction);
     }
   } catch (error) {

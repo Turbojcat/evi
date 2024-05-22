@@ -3,6 +3,7 @@ const path = require('path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { TOKEN, CLIENT_ID, GUILD_ID } = require('../config');
+const replacePlaceholders = require('../utils/replacePlaceholders');
 
 async function findSlashCommandFiles(directory) {
   const slashCommands = [];
