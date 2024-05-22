@@ -1,0 +1,78 @@
+Moderasjonskommandoer
+Evi tilbyr et omfattende sett med moderasjonskommandoer for å opprettholde orden og sikkerhet på serveren. Disse kommandoene inkluderer:
+
+Kick
+Kommando: !kick <user> [reason] eller /kick <user> [reason]
+Beskrivelse: Sparker en bruker fra serveren.
+Tillatelse: Administratortillatelse kreves.
+Ban
+Kommando: !ban <user> [duration] [reason] eller /ban <user> [duration] [reason]
+Beskrivelse: Utestenger en bruker fra serveren, enten permanent eller for en bestemt tidsperiode.
+Tillatelse: Administratortillatelse kreves.
+Varighet: Varigheten kan spesifiseres ved hjelp av følgende format:
+1s: 1 sekund
+2m: 2 minutter
+3h: 3 timer
+4d: 4 dager
+5y: 5 år
+Hvis ingen varighet er spesifisert, vil det være en permanent utestengelse.
+Unban
+Kommando: !unban <user> eller /unban <user>
+Beskrivelse: Opphever utestengelsen av en bruker fra serveren.
+Tillatelse: Administratortillatelse kreves.
+Timeout
+Kommando: !timeout <user> [duration] [reason] eller /timeout <user> [duration] [reason]
+Beskrivelse: Gir en bruker en timeout, noe som hindrer dem i å sende meldinger i en bestemt tidsperiode.
+Tillatelse: Administratortillatelse kreves.
+Varighet: Varigheten kan spesifiseres ved hjelp av samme format som for ban-kommandoen.
+Mute
+Kommando: !mute <user> [reason] eller /mute <user> [reason]
+Beskrivelse: Demper en bruker, noe som hindrer dem i å sende meldinger på serveren.
+Tillatelse: Administratortillatelse kreves.
+Alle moderasjonshandlinger vil bli logget i en egen tekstkanal for moderasjonslogging.
+
+Automatisk moderasjonssystem
+I tillegg til de manuelle moderasjonskommandoene tilbyr Evi et avansert automatisk moderasjonssystem med følgende funksjoner:
+
+Ordfilter
+Evi vil automatisk filtrere og fjerne meldinger som inneholder forbudte ord eller uttrykk.
+Serveradministratorer kan konfigurere listen over forbudte ord ved hjelp av en kommando.
+Advarselssystem
+Evi vil utstede advarsler til brukere som bryter serverreglene eller utløser ordfiltre.
+Advarsler vil bli logget i databasen og kan vises ved hjelp av en kommando.
+Streaksystem
+Evi vil holde styr på antall advarsler eller regelbrudd for hver bruker.
+Serveradministratorer kan konfigurere terskelen for streaks ved hjelp av en kommando.
+Når en bruker når den konfigurerte streakterskelen, kan de automatisk bli utestengt eller sparket, avhengig av serverinnstillingene.
+Konfigurasjon av automatisk moderasjon
+Serveradministratorer kan tilpasse innstillingene for det automatiske moderasjonssystemet ved hjelp av kommandoer.
+Innstillinger kan inkludere konfigurering av ordfilter, streakterskler, moderasjonshandlinger (utestenging eller sparking) og mer.
+Databaseintegrasjon
+Alle moderasjonshandlinger og -innstillinger vil bli lagret i en database for å sikre persistens og konsistens. Evi vil opprette de nødvendige databasetabellene og synkronisere med databasen automatisk.
+
+Databasemodellene for moderasjonssystemet kan inkludere tabeller for:
+
+Advarsler: Lagrer informasjon om advarsler utstedt til brukere.
+Utestengelser: Lagrer informasjon om utestengte brukere og varigheten av utestengelsen.
+Moderasjonsinnstillinger: Lagrer serverens konfigurasjonsinnstillinger for moderasjonssystemet.
+Moderasjonslogging
+Alle moderasjonshandlinger, inkludert manuelle kommandoer og automatiske moderasjonshendelser, vil bli logget i en dedikert tekstkanal på serveren. Loggene vil inneholde detaljer som:
+
+Moderatorens navn eller ID
+Målbrukerens navn eller ID
+Moderasjonshandlingen (sparking, utestenging, timeout, demping)
+Tidspunktet for handlingen
+Årsaken eller begrunnelsen for handlingen (hvis oppgitt)
+Dette sikrer ansvarlighet og transparens i moderasjonsprosessen.
+
+Ytterligere funksjoner
+Her er noen flere funksjoner som kan vurderes for det automatiske moderasjonssystemet:
+
+Automatisk spamoppdagelse og -håndtering
+Lenkefiltrering for å forhindre deling av skadelige eller upassende nettsteder
+Integrering med eksterne API-er for innholdsmoderering og -filtrering
+Mulighet for brukere å appellere moderasjonshandlinger gjennom en kommando
+Generering av moderasjonsrapporter og statistikk
+Husk at implementeringen av disse funksjonene vil kreve ytterligere kodeendringer og databasetilpasninger i henhold til den eksisterende kodebasen på GitHub.
+
+Dette utvidede moderasjonssystemet vil gi Evi-boten kraftige verktøy for å opprettholde en trygg og vennlig serveromgivelse, samtidig som det gir fleksibilitet og konfigurasjonsmuligheter for serveradministratorer.

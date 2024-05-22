@@ -12,5 +12,10 @@ module.exports = {
   GUILD_ID: process.env.GUILD_ID,
   PREMIUM_ROLE_ID: process.env.PREMIUM_ROLE_ID,
   //placeholders.
+
+  //moderation
+  forbiddenWords: ['badword1', 'badword2', 'badword3'],
+  streakThreshold: 3,
+  streakAction: 'ban', // or 'kick'
   
 };
