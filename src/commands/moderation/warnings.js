@@ -1,38 +1,37 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { PermissionFlagsBits } = require('discord.js');
-const { ModAction } = require('../../database/models/ModAction');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('warnings')
-    .setDescription('Displays the warnings for a user')
+    .setDescription('Shows warnings for a user')
     .addUserOption(option =>
       option.setName('user')
-        .setDescription('The user to display warnings for')
+        .setDescription('The user to show warnings for')
         .setRequired(true))
-    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .setDMPermission(false),
   async execute(interaction) {
     const user = interaction.options.getUser('user');
 
     try {
-      const warnings = await ModAction.findAll({
-        where: {
-          action: 'Warn',
-          targetId: user.id,
-        },
-      });
+      // Hent advarslene for brukeren fra databasen
+      // Eksempel: const warnings = await Warning.findAll({ where: { userId: user.id } });
 
-      if (warnings.length === 0) {
-        await interaction.reply(`No warnings found for user ${user.tag}.`);
-        return;
-      }
+      // Formater advarslene som en melding eller embed
+      const warningsList = warnings.map((warning, index) => `${index + 1}. ${warning.reason}`).join('\n');
 
-      const warningList = warnings.map(warn => `ID: ${warn.id} | Reason: ${warn.reason || 'No reason provided'}`).join('\n');
-      await interaction.reply(`Warnings for user ${user.tag}:\n${warningList}`);
+      const embed = {
+        color: 0xffff00,
+        title: `Warnings for ${user.tag}`,
+        description: warningsList || 'No warnings found.',
+        timestamp: new Date(),
+      };
+
+      await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error(error);
-      await interaction.reply('Failed to retrieve warnings. Please try again later.');
+      console.error('Error fetching warnings:', error);
+      await interaction.reply('An error occurred while fetching warnings. Please try again later.');
     }
   },
 };

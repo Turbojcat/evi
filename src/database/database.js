@@ -1,5 +1,4 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const mysql = require('mysql2/promise');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
@@ -16,7 +15,8 @@ const models = {
   TicketTranscript: require('./models/TicketTranscript')(sequelize),
   TicketCategory: require('./models/TicketCategory')(sequelize, DataTypes),
   PremiumUser: require('./models/PremiumUser')(sequelize),
-  ModAction: require('./models/ModAction')(sequelize),
+  ModLogChannel: require('./models/ModLogChannel')(sequelize, DataTypes),
+  ModAlertChannel: require('./models/ModAlertChannel')(sequelize, DataTypes),
   // Add more models as needed
 };
 
@@ -29,7 +29,6 @@ models.Ticket.hasMany(models.TicketLog);
 models.TicketLog.belongsTo(models.Ticket);
 models.Ticket.hasOne(models.TicketTranscript);
 models.TicketTranscript.belongsTo(models.Ticket);
-
 
 async function connectDatabase() {
   try {
@@ -44,7 +43,7 @@ async function connectDatabase() {
 
 async function syncDatabase() {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true });
     console.log('Database synced successfully');
   } catch (error) {
     console.error('Error syncing database:', error);
