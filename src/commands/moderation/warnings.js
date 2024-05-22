@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions } = require('discord.js');
-const { Warnings } = require('../../database/models');
+const { PermissionFlagsBits } = require('discord.js');
+const { ModAction } = require('../../database/models/ModAction');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,28 +8,31 @@ module.exports = {
     .setDescription('Displays the warnings for a user')
     .addUserOption(option =>
       option.setName('user')
-        .setDescription('The user to view warnings for')
-        .setRequired(true)),
+        .setDescription('The user to display warnings for')
+        .setRequired(true))
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+    .setDMPermission(false),
   async execute(interaction) {
-    if (!interaction.member.permissions.has(Permissions.MODERATE_MEMBERS)) {
-      return interaction.reply({ content: 'You do not have permission to view warnings.', ephemeral: true });
-    }
-
     const user = interaction.options.getUser('user');
 
     try {
-      const warnings = await Warnings.findOne({
-        where: { userId: user.id, guildId: interaction.guild.id },
+      const warnings = await ModAction.findAll({
+        where: {
+          action: 'Warn',
+          targetId: user.id,
+        },
       });
 
-      if (!warnings) {
-        await interaction.reply(`${user.tag} has no warnings.`);
-      } else {
-        await interaction.reply(`${user.tag} has ${warnings.count} warning(s).`);
+      if (warnings.length === 0) {
+        await interaction.reply(`No warnings found for user ${user.tag}.`);
+        return;
       }
+
+      const warningList = warnings.map(warn => `ID: ${warn.id} | Reason: ${warn.reason || 'No reason provided'}`).join('\n');
+      await interaction.reply(`Warnings for user ${user.tag}:\n${warningList}`);
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'There was an error fetching the warnings.', ephemeral: true });
+      await interaction.reply('Failed to retrieve warnings. Please try again later.');
     }
   },
 };

@@ -1,36 +1,44 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions } = require('discord.js');
-const { Warnings } = require('../../database/models');
+const { PermissionFlagsBits } = require('discord.js');
+const { ModAction } = require('../../database/models/ModAction');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('removewarning')
+    .setName('removewarn')
     .setDescription('Removes a warning from a user')
     .addUserOption(option =>
       option.setName('user')
-        .setDescription('The user to remove a warning from')
-        .setRequired(true)),
+        .setDescription('The user to remove the warning from')
+        .setRequired(true))
+    .addStringOption(option =>
+      option.setName('warn_id')
+        .setDescription('The ID of the warning to remove')
+        .setRequired(true))
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+    .setDMPermission(false),
   async execute(interaction) {
-    if (!interaction.member.permissions.has(Permissions.MODERATE_MEMBERS)) {
-      return interaction.reply({ content: 'You do not have permission to remove warnings.', ephemeral: true });
-    }
-
     const user = interaction.options.getUser('user');
+    const warnId = interaction.options.getString('warn_id');
 
     try {
-      const warning = await Warnings.findOne({
-        where: { userId: user.id, guildId: interaction.guild.id },
+      const warn = await ModAction.findOne({
+        where: {
+          id: warnId,
+          action: 'Warn',
+          targetId: user.id,
+        },
       });
 
-      if (!warning) {
-        await interaction.reply(`${user.tag} has no warnings to remove.`);
-      } else {
-        await warning.decrement('count');
-        await interaction.reply(`Removed a warning from ${user.tag}. They now have ${warning.count} warning(s).`);
+      if (!warn) {
+        await interaction.reply(`No warning found with ID ${warnId} for user ${user.tag}.`);
+        return;
       }
+
+      await warn.destroy();
+      await interaction.reply(`Removed warning with ID ${warnId} from user ${user.tag}.`);
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'There was an error removing the warning.', ephemeral: true });
+      await interaction.reply('Failed to remove the warning. Please check the provided warn ID and try again.');
     }
   },
 };

@@ -16,6 +16,7 @@ const models = {
   TicketTranscript: require('./models/TicketTranscript')(sequelize),
   TicketCategory: require('./models/TicketCategory')(sequelize, DataTypes),
   PremiumUser: require('./models/PremiumUser')(sequelize),
+  ModAction: require('./models/ModAction')(sequelize),
   // Add more models as needed
 };
 
