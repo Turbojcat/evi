@@ -1,6 +1,6 @@
 // src/database/models/autoResponse.js
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../connection');
+const { sequelize } = require('../database');
 
 const AutoResponse = sequelize.define('AutoResponse', {
   id: {

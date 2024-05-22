@@ -4,13 +4,14 @@ const { TOKEN, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('./config');
 const { loadCommands } = require('./handlers/commandHandler');
 const { loadEvents } = require('./handlers/eventHandler');
 const { registerSlashCommands } = require('./handlers/slashCommandHandler');
-const { connectDatabase, syncDatabase } = require('./database/database');
+const { syncDatabase } = require('./database/database');
 const { setupPermissionSystem } = require('./utils/permissionSystem');
 const { initializeLogging } = require('./utils/logging');
 const { scheduleJobs } = require('./jobs');
 const path = require('path');
 const config = require('./config');
 const fs = require('fs');
+const { connectDatabase } = require('./database/connection');
 
 const client = new Client({
   intents: [
