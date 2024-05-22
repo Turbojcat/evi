@@ -20,6 +20,7 @@ const models = {
   PremiumUser: require('./models/PremiumUser')(sequelize),
   ModLogChannel: require('./models/ModLogChannel')(sequelize, DataTypes),
   ModAlertChannel: require('./models/ModAlertChannel')(sequelize, DataTypes),
+  CustomPlaceholder: require('./models/CustomPlaceholder')(sequelize),
   // Add more models as needed
 };
 

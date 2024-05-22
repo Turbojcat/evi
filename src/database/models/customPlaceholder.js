@@ -21,6 +21,10 @@ const CustomPlaceholder = sequelize.define('CustomPlaceholder', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  premium: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   // Add more fields as needed
 });
 
