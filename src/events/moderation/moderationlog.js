@@ -1,21 +1,41 @@
 const { MessageEmbed } = require('discord.js');
-const { ModAction } = require('../../database/models');
-const { ModSettings } = require('../../database/models');
+const { ModAction } = require('../../database/models/ModAction');
+const { ModSettings } = require('../../database/models/ModSettings');
 
 module.exports = {
   name: 'moderationAction',
   async execute(moderator, target, action, reason) {
-    const logChannel = moderator.guild.channels.cache.find(channel => channel.name === 'moderation-logs');
-    if (!logChannel) return;
+    try {
+      const settings = await ModSettings.findOne({ where: { guildId: moderator.guild.id } });
+      if (!settings || !settings.modLogChannelId) {
+        return;
+      }
 
-    const embed = new MessageEmbed()
-      .setColor('#ff0000')
-      .setTitle(`Moderation Action: ${action}`)
-      .addField('Moderator', moderator.tag)
-      .addField('Target', target.tag)
-      .addField('Reason', reason || 'No reason provided')
-      .setTimestamp();
+      const logChannelId = settings.modLogChannelId;
+      const logChannel = moderator.guild.channels.cache.get(logChannelId);
+      if (!logChannel) {
+        return;
+      }
 
-    await logChannel.send({ embeds: [embed] });
+      const embed = new MessageEmbed()
+        .setColor('#ff0000')
+        .setTitle(`Moderation Action: ${action}`)
+        .addField('Moderator', moderator.tag)
+        .addField('Target', target.tag)
+        .addField('Reason', reason || 'No reason provided')
+        .setTimestamp();
+
+      await logChannel.send({ embeds: [embed] });
+
+      await ModAction.create({
+        guildId: moderator.guild.id,
+        moderatorId: moderator.id,
+        action: action,
+        targetId: target.id,
+        reason: reason,
+      });
+    } catch (error) {
+      console.error('Failed to log moderation action:', error);
+    }
   },
 };

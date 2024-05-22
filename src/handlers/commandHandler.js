@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Collection } = require('discord.js');
+const { ModAction } = require('../database/models/ModAction');
 
 async function loadCommands(client) {
   client.commands = new Collection();
@@ -38,6 +39,13 @@ async function loadCommands(client) {
         console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
       }
     }
+  }
+
+  try {
+    await ModAction.sync();
+    console.log('ModAction model synced');
+  } catch (error) {
+    console.error('Failed to sync ModAction model:', error);
   }
 }
 

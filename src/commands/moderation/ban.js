@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Permissions } = require('discord.js');
-const ms = require('ms');
+const { PermissionFlagsBits } = require('discord.js');
+const { ModAction } = require('../../database/models/ModAction');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,32 +11,32 @@ module.exports = {
         .setDescription('The user to ban')
         .setRequired(true))
     .addStringOption(option =>
-      option.setName('duration')
-        .setDescription('The duration of the ban (e.g., 1s, 2m, 3h, 4d, 5y)'))
-    .addStringOption(option =>
       option.setName('reason')
-        .setDescription('The reason for the ban')),
+        .setDescription('The reason for the ban'))
+    .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
+    .setDMPermission(false),
   async execute(interaction) {
-    if (!interaction.member.permissions.has(Permissions.BAN_MEMBERS)) {
-      return interaction.reply({ content: 'You do not have permission to ban members.', ephemeral: true });
-    }
-
     const user = interaction.options.getUser('user');
-    const duration = interaction.options.getString('duration');
     const reason = interaction.options.getString('reason') || 'No reason provided';
 
     try {
-      if (duration) {
-        const banDuration = ms(duration);
-        await interaction.guild.members.ban(user, { reason, days: banDuration / 86400000 });
-        await interaction.reply(`Successfully banned ${user.tag} from the server for ${duration}.`);
-      } else {
-        await interaction.guild.members.ban(user, { reason });
-        await interaction.reply(`Successfully banned ${user.tag} from the server permanently.`);
+      await interaction.guild.members.ban(user, { reason });
+      await interaction.reply(`Banned ${user.tag} from the server. Reason: ${reason}`);
+
+      try {
+        await ModAction.create({
+          guildId: interaction.guild.id,
+          moderatorId: interaction.user.id,
+          action: 'Ban',
+          targetId: user.id,
+          reason: reason,
+        });
+      } catch (error) {
+        console.error('Failed to log moderation action:', error);
       }
     } catch (error) {
       console.error(error);
-      await interaction.reply({ content: 'There was an error trying to ban the user.', ephemeral: true });
+      await interaction.reply('Failed to ban the user. Please check my permissions and try again.');
     }
   },
 };

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { ModAction } = require('../database/models/ModAction');
 
 async function loadEvents(client) {
   const eventFolders = fs.readdirSync(path.join(__dirname, '..', 'events'));
@@ -15,6 +16,13 @@ async function loadEvents(client) {
         client.on(event.name, (...args) => event.execute(...args, client));
       }
     }
+  }
+
+  try {
+    await ModAction.sync();
+    console.log('ModAction model synced');
+  } catch (error) {
+    console.error('Failed to sync ModAction model:', error);
   }
 
   console.log('Events loaded');
