@@ -20,6 +20,8 @@ const { initializeLogging } = require('./utils/logging');
 
 // Import the job scheduling function from the jobs file
 const { scheduleJobs } = require('./jobs');
+const path = require('path');
+const config = require(path.join(__dirname, '..', 'config', 'config'));
 
 // Create a new Discord client instance with the specified intents
 const client = new Client({
