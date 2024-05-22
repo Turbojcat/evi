@@ -1,63 +1,84 @@
-const { connectDatabase } = require('../database');
+// src/database/models/User.js
+const { DataTypes } = require('sequelize');
 
-async function createUserTable() {
-  const connection = await connectDatabase();
+module.exports = (sequelize) => {
+  const User = sequelize.define('User', {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+    },
+    discordId: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    wallet: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    bank: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    dailyStreak: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lastDailyTimestamp: {
+      type: DataTypes.DATE,
+    },
+    weeklyStreak: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lastWeeklyTimestamp: {
+      type: DataTypes.DATE,
+    },
+    monthlyStreak: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lastMonthlyTimestamp: {
+      type: DataTypes.DATE,
+    },
+    workStreak: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lastWorkTimestamp: {
+      type: DataTypes.DATE,
+    },
+    inventory: {
+      type: DataTypes.JSON,
+      defaultValue: {},
+    },
+    fishingRod: {
+      type: DataTypes.STRING,
+    },
+    fishingBait: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    lastFishingTimestamp: {
+      type: DataTypes.DATE,
+    },
+    miningPick: {
+      type: DataTypes.STRING,
+    },
+    lastMiningTimestamp: {
+      type: DataTypes.DATE,
+    },
+    woodcuttingAxe: {
+      type: DataTypes.STRING,
+    },
+    lastWoodcuttingTimestamp: {
+      type: DataTypes.DATE,
+    },
+  });
 
-  try {
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        discordId VARCHAR(255) UNIQUE NOT NULL,
-        username VARCHAR(255) NOT NULL
-        -- Add more fields as needed
-      )
-    `);
-
-    console.log('Users table created or already exists');
-  } catch (error) {
-    console.error('Error creating users table:', error);
-  } finally {
-    connection.end();
-  }
-}
-
-async function createUser(discordId, username) {
-  const connection = await connectDatabase();
-
-  try {
-    await connection.execute(
-      'INSERT INTO users (discordId, username) VALUES (?, ?)',
-      [discordId, username]
-    );
-
-    console.log('User created successfully');
-  } catch (error) {
-    console.error('Error creating user:', error);
-  } finally {
-    connection.end();
-  }
-}
-
-async function getUserByDiscordId(discordId) {
-  const connection = await connectDatabase();
-
-  try {
-    const [rows] = await connection.execute(
-      'SELECT * FROM users WHERE discordId = ?',
-      [discordId]
-    );
-
-    return rows[0];
-  } catch (error) {
-    console.error('Error retrieving user:', error);
-    return null;
-  } finally {
-    connection.end();
-  }
-}
-
-module.exports = {
-  createUserTable,
-  createUser,
-  getUserByDiscordId,
+  return User;
 };

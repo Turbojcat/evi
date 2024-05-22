@@ -1,12 +1,15 @@
+// src/database/connection.js
 const { Sequelize, DataTypes } = require('sequelize');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
+  logging: false,
 });
 
 const models = {
+  User: require('./models/User')(sequelize),
   Ticket: require('./models/Ticket')(sequelize),
   TicketQuestion: require('./models/TicketQuestion')(sequelize),
   TicketResponse: require('./models/TicketResponse')(sequelize),
@@ -30,10 +33,15 @@ models.TicketLog.belongsTo(models.Ticket);
 models.Ticket.hasOne(models.TicketTranscript);
 models.TicketTranscript.belongsTo(models.Ticket);
 
-async function connectDatabase() {
+async function connectToDatabase() {
   try {
     await sequelize.authenticate();
     console.log('Connected to the MySQL database');
+
+    // Sync the models with the database
+    await syncModels();
+    console.log('Database models synced');
+
     return sequelize;
   } catch (error) {
     console.error('Error connecting to the MySQL database:', error);
@@ -41,18 +49,17 @@ async function connectDatabase() {
   }
 }
 
-async function syncDatabase() {
+async function syncModels() {
   try {
     await sequelize.sync({ alter: true });
-    console.log('Database synced successfully');
   } catch (error) {
-    console.error('Error syncing database:', error);
+    console.error('Error syncing database models:', error);
+    throw error;
   }
 }
 
 module.exports = {
-  connectDatabase,
-  syncDatabase,
+  connectToDatabase,
   sequelize,
   ...models,
 };

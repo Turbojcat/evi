@@ -1,13 +1,17 @@
+// src/utils/logging.js
 const winston = require('winston');
+const { combine, timestamp, printf } = winston.format;
+
+const logFormat = printf(({ level, message, timestamp }) => {
+  return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+});
 
 function initializeLogging() {
   const logger = winston.createLogger({
     level: 'info',
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.printf(({ level, message, timestamp }) => {
-        return `${timestamp} [${level.toUpperCase()}]: ${message}`;
-      })
+    format: combine(
+      timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+      logFormat
     ),
     transports: [
       new winston.transports.Console(),
@@ -16,7 +20,7 @@ function initializeLogging() {
     ],
   });
 
-  // Legg til en global logger for bruk i andre filer
+  // Add a global logger for use in other files
   global.logger = logger;
 
   logger.info('Logging system initialized');
