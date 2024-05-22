@@ -21,7 +21,7 @@ module.exports = {
 
       const embed = new MessageEmbed()
         .setTitle(`${user.username}'s Balance`)
-        .setDescription(`**Wallet:** ${balance.wallet} coins\n**Bank:** ${balance.bank} coins`)
+        .setDescription(`**Wallet:** ${balance.wallet} evi :coin:\n**Bank:** ${balance.bank} coins`)
         .setColor('#00ff00')
         .setTimestamp();
 
