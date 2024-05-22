@@ -1,5 +1,6 @@
+// src/commands/utility/help.js
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +11,8 @@ module.exports = {
   usage: '!help',
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Displays a list of available commands'),
+    .setDescription('Displays a list of available commands')
+    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
   async execute(interaction, message) {
     console.log('Executing help command');
 
@@ -120,6 +122,16 @@ async function sendCategoryHelpEmbed(interaction, message, categoryName) {
         value: `${commandDescription}\n\nAliases: ${commandAliases}\nCooldown: ${commandCooldown}\nRole: ${commandRole}\nPermission: ${commandPermission}`
       });
     }
+  });
+
+  // Add custom placeholder commands
+  helpEmbed.addFields({
+    name: 'Custom Placeholders',
+    value: `
+      \`/create-custom-placeholder\` - Create a new custom placeholder
+      \`/edit-custom-placeholder\` - Edit an existing custom placeholder
+      \`/delete-custom-placeholder\` - Delete a custom placeholder
+    `,
   });
 
   if (interaction) {

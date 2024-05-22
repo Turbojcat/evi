@@ -1,12 +1,15 @@
+// src/events/messages/messageCreate.js
+const AutoResponse = require('../../database/models/AutoResponse');
 const { PREFIX } = require('../../config');
 const { ModAlertChannel } = require('../../database/database');
+const { replacePlaceholders } = require('../../utils/placeholders');
 
 module.exports = {
   name: 'messageCreate',
   async execute(message) {
     if (message.author.bot) return;
 
-    // Sjekk meldingen mot definerte kriterier for potensielle regelbrudd
+    // Check the message against defined criteria for potential rule violations
     const violationDetected = checkForViolation(message.content);
 
     if (violationDetected) {
@@ -44,7 +47,17 @@ module.exports = {
       }
     }
 
-    // Håndter prefix-kommandoer
+    // Handle auto-responses
+    const autoResponses = await AutoResponse.findAll();
+
+    for (const autoResponse of autoResponses) {
+      if (message.content.toLowerCase().includes(autoResponse.trigger.toLowerCase())) {
+        const processedResponse = await replacePlaceholders(autoResponse.response, message);
+        message.channel.send(autoResponse.response);
+      }
+    }
+
+    // Handle prefix commands
     if (!message.content.startsWith(PREFIX)) return;
 
     const args = message.content.slice(PREFIX.length).trim().split(/ +/);
@@ -64,8 +77,8 @@ module.exports = {
 };
 
 function checkForViolation(content) {
-  // Implementer logikken for å sjekke meldingsinnholdet mot definerte kriterier
-  // Returner true hvis en overtredelse oppdages, ellers false
-  // Dette kan inkludere søk etter upassende språk, lenker, etc.
-  // Du kan også integrere med eksterne APIer for innholdsmoderering
+  // Implement the logic to check the message content against defined criteria
+  // Return true if a violation is detected, otherwise false
+  // This can include searching for inappropriate language, links, etc.
+  // You can also integrate with external APIs for content moderation
 }

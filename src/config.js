@@ -11,6 +11,10 @@ module.exports = {
   CLIENT_ID: process.env.CLIENT_ID,
   GUILD_ID: process.env.GUILD_ID,
   PREMIUM_ROLE_ID: process.env.PREMIUM_ROLE_ID,
+  AUTO_RESPONSE_FREE_LIMIT: 10,
+  AUTO_RESPONSE_PREMIUM_LIMIT: 50,
+  STARTING_BALANCE: 100,
+  DAILY_REWARD_AMOUNT: 50,
   //placeholders.
 
   //moderation
