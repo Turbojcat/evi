@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Collection } = require('discord.js');
-const { ModAction } = require('../database/models/ModAction');
+const { ModAction } = require('../database/database.js');
 
 async function loadCommands(client) {
   client.commands = new Collection();

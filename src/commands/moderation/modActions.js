@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Permissions, MessageEmbed } = require('discord.js');
-const { ModAction } = require('../../database/models/ModAction');
+const { ModAction } = require('../../database/database.js');
 const { sequelize } = require('../../database/database');
 
 module.exports = {

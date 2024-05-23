@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { ModAction } = require('../database/models/ModAction');
+const { ModAction } = require('../database/database.js');
 
 async function loadEvents(client) {
   const eventFolders = fs.readdirSync(path.join(__dirname, '..', 'events'));

@@ -85,6 +85,33 @@ const User = sequelize.define('User', {
   },
 });
 
+const ModAction = sequelize.define('ModAction', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  guildId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  moderatorId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  action: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  targetId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  reason: {
+    type: DataTypes.TEXT,
+  },
+});
+
 const Ticket = require('./models/Ticket')(sequelize, DataTypes);
 const TicketQuestion = require('./models/TicketQuestion')(sequelize, DataTypes);
 const TicketResponse = require('./models/TicketResponse')(sequelize, DataTypes);
@@ -96,7 +123,6 @@ const PremiumUser = require('./models/PremiumUser')(sequelize, DataTypes);
 const ModLogChannel = require('./models/ModLogChannel')(sequelize, DataTypes);
 const ModAlertChannel = require('./models/ModAlertChannel')(sequelize, DataTypes);
 const CustomPlaceholder = require('./models/CustomPlaceholder')(sequelize, DataTypes);
-const ModAction = require('./models/ModAction')(sequelize, DataTypes);
 
 const models = {
   User,
