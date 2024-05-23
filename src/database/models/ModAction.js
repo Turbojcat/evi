@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const ModAction = sequelize.define('ModAction', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     guildId: {
       type: DataTypes.STRING,
       allowNull: false,

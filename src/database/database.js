@@ -1,6 +1,20 @@
 // src/database/database.js
 const { Sequelize, DataTypes } = require('sequelize');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
+const User = require('./models/User')
+const Ticket = require('./models/Ticket')
+const TicketQuestion = require('./models/TicketQuestion')
+const TicketResponse = require('./models/TicketResponse')
+const TicketStaffRole = require('./models/TicketStaffRole')
+const TicketLog = require('./models/TicketLog')
+const TicketTranscript = require('./models/TicketTranscript')
+const TicketCategory = require('./models/TicketCategory')
+const PremiumUser = require('./models/PremiumUser')
+const ModLogChannel = require('./models/ModLogChannel')
+const ModAlertChannel = require('./models/ModAlertChannel')
+const CustomPlaceholder = require('./models/CustomPlaceholder')
+const ModAction = require('./models/ModAction')
+
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
@@ -21,6 +35,8 @@ const models = {
   ModLogChannel: require('./models/ModLogChannel')(sequelize, DataTypes),
   ModAlertChannel: require('./models/ModAlertChannel')(sequelize, DataTypes),
   CustomPlaceholder: require('./models/CustomPlaceholder')(sequelize, DataTypes),
+  ModAction: require('./models/ModAction')(sequelize, DataTypes),
+
 };
 
 async function connectToDatabase() {
@@ -49,4 +65,17 @@ module.exports = {
   syncDatabase,
   sequelize,
   ...models,
+  User,
+  Ticket,
+  TicketQuestion,
+  TicketResponse,
+  TicketStaffRole,
+  TicketLog,
+  TicketTranscript,
+  TicketCategory,
+  PremiumUser,
+  ModLogChannel,
+  ModAlertChannel,
+  CustomPlaceholder,
+  ModAction,
 };
