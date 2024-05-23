@@ -1,5 +1,6 @@
 // src/database/connection.js
 const { Sequelize } = require('sequelize');
+const config = require('../config');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = require('../config');
 const { TicketLog } = require('./models/TicketLog');
 
@@ -40,4 +41,5 @@ module.exports = {
   syncDatabase,
   sequelize,
   TicketLog,
+  ModAction,
 };
