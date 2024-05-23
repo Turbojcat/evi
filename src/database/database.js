@@ -1,7 +1,90 @@
-// src/database/database.js
 const { Sequelize, DataTypes } = require('sequelize');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
-const User = require('./models/User')(sequelize, DataTypes);
+
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+  host: DB_HOST,
+  dialect: 'mysql',
+  logging: false,
+});
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.STRING,
+    primaryKey: true,
+  },
+  discordId: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false,
+  },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  wallet: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  bank: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  dailyStreak: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  lastDailyTimestamp: {
+    type: DataTypes.DATE,
+  },
+  weeklyStreak: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  lastWeeklyTimestamp: {
+    type: DataTypes.DATE,
+  },
+  monthlyStreak: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  lastMonthlyTimestamp: {
+    type: DataTypes.DATE,
+  },
+  workStreak: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  lastWorkTimestamp: {
+    type: DataTypes.DATE,
+  },
+  inventory: {
+    type: DataTypes.JSON,
+    defaultValue: {},
+  },
+  fishingRod: {
+    type: DataTypes.STRING,
+  },
+  fishingBait: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  lastFishingTimestamp: {
+    type: DataTypes.DATE,
+  },
+  miningPick: {
+    type: DataTypes.STRING,
+  },
+  lastMiningTimestamp: {
+    type: DataTypes.DATE,
+  },
+  woodcuttingAxe: {
+    type: DataTypes.STRING,
+  },
+  lastWoodcuttingTimestamp: {
+    type: DataTypes.DATE,
+  },
+});
+
 const Ticket = require('./models/Ticket')(sequelize, DataTypes);
 const TicketQuestion = require('./models/TicketQuestion')(sequelize, DataTypes);
 const TicketResponse = require('./models/TicketResponse')(sequelize, DataTypes);
@@ -15,55 +98,7 @@ const ModAlertChannel = require('./models/ModAlertChannel')(sequelize, DataTypes
 const CustomPlaceholder = require('./models/CustomPlaceholder')(sequelize, DataTypes);
 const ModAction = require('./models/ModAction')(sequelize, DataTypes);
 
-const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
-  host: DB_HOST,
-  dialect: 'mysql',
-  logging: false,
-});
-
 const models = {
-  User: require('./models/User')(sequelize, DataTypes),
-  Ticket: require('./models/Ticket')(sequelize, DataTypes),
-  TicketQuestion: require('./models/TicketQuestion')(sequelize, DataTypes),
-  TicketResponse: require('./models/TicketResponse')(sequelize, DataTypes),
-  TicketStaffRole: require('./models/TicketStaffRole')(sequelize, DataTypes),
-  TicketLog: require('./models/TicketLog')(sequelize, DataTypes),
-  TicketTranscript: require('./models/TicketTranscript')(sequelize, DataTypes),
-  TicketCategory: require('./models/TicketCategory')(sequelize, DataTypes),
-  PremiumUser: require('./models/PremiumUser')(sequelize, DataTypes),
-  ModLogChannel: require('./models/ModLogChannel')(sequelize, DataTypes),
-  ModAlertChannel: require('./models/ModAlertChannel')(sequelize, DataTypes),
-  CustomPlaceholder: require('./models/CustomPlaceholder')(sequelize, DataTypes),
-  ModAction: require('./models/ModAction')(sequelize, DataTypes),
-
-};
-
-async function connectToDatabase() {
-  try {
-    await sequelize.authenticate();
-    console.log('Connected to the MySQL database');
-    return sequelize;
-  } catch (error) {
-    console.error('Error connecting to the MySQL database:', error);
-    throw error;
-  }
-}
-
-async function syncDatabase() {
-  try {
-    await sequelize.sync({ alter: true });
-    console.log('Database models synced');
-  } catch (error) {
-    console.error('Error syncing database models:', error);
-    throw error;
-  }
-}
-
-module.exports = {
-  connectToDatabase,
-  syncDatabase,
-  sequelize,
-  ...models,
   User,
   Ticket,
   TicketQuestion,
@@ -77,4 +112,29 @@ module.exports = {
   ModAlertChannel,
   CustomPlaceholder,
   ModAction,
+};
+
+async function connectToDatabase() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connected to the database');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+async function syncDatabase() {
+  try {
+    await sequelize.sync();
+    console.log('Database models synced');
+  } catch (error) {
+    console.error('Error syncing database models:', error);
+  }
+}
+
+module.exports = {
+  connectToDatabase,
+  syncDatabase,
+  sequelize,
+  ...models,
 };
