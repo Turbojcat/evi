@@ -1,4 +1,4 @@
-const { Warnings } = require('../../database/models');
+const { Warnings, ModSettings } = require('../../database/models');
 
 
 module.exports = {

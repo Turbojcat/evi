@@ -1,6 +1,4 @@
-// src/commands/utility/help.js
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -11,25 +9,15 @@ module.exports = {
   usage: '!help',
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Displays a list of available commands')
-    .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
-  async execute(interaction, message) {
-    console.log('Executing help command');
-
+    .setDescription('Displays a list of available commands'),
+  async execute(interaction) {
     const commandsPath = path.join(__dirname, '..');
     const commandFolders = fs.readdirSync(commandsPath).filter(folder => fs.statSync(path.join(commandsPath, folder)).isDirectory());
 
-    console.log('Categories:', commandFolders);
-
-    const user = interaction ? interaction.user : message ? message.author : null;
-    const member = interaction ? interaction.member : message ? message.member : null;
-    const isAdmin = member ? member.permissions.has('ADMINISTRATOR') : false;
-    const isOwner = interaction && interaction.client.application.owner ? interaction.client.application.owner.id === user.id : false;
-
-    console.log('User:', user);
-    console.log('Member:', member);
-    console.log('Is Admin:', isAdmin);
-    console.log('Is Owner:', isOwner);
+    const user = interaction.user;
+    const member = interaction.member;
+    const isAdmin = member.permissions.has('ADMINISTRATOR');
+    const isOwner = interaction.client.application.owner.id === user.id;
 
     const filteredCategories = commandFolders.filter(category => {
       const categoryPath = path.join(commandsPath, category);
@@ -39,198 +27,125 @@ module.exports = {
         const command = require(path.join(categoryPath, file));
         if (command.ownerOnly && !isOwner) return false;
         if (command.adminOnly && !isAdmin) return false;
-        if (command.staffOnly && member && !member.roles.cache.some(role => role.name === 'Staff')) return false;
+        if (command.staffOnly && !member.roles.cache.some(role => role.name === 'Staff')) return false;
         return true;
       });
     });
-
-    console.log('Filtered Categories:', filteredCategories);
 
     if (filteredCategories.length === 0) {
-      console.log('No available commands for user permissions');
-      if (interaction) {
-        return interaction.reply({ content: 'No available commands for your permissions.', ephemeral: true });
-      } else if (message) {
-        return message.reply('No available commands for your permissions.');
-      }
+      return interaction.reply({ content: 'No available commands for your permissions.', ephemeral: true });
     }
 
-    console.log('Sending category select menu');
-    await sendCategorySelectMenu(interaction, message, filteredCategories);
+    const helpEmbeds = [];
+    let currentEmbedFields = [];
+
+    for (const categoryName of filteredCategories) {
+      const categoryPath = path.join(__dirname, '..', categoryName);
+      const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+
+      const filteredCommands = commandFiles.map(file => {
+        const command = require(path.join(categoryPath, file));
+        if (command.ownerOnly && !isOwner) return null;
+        if (command.adminOnly && !isAdmin) return null;
+        if (command.staffOnly && !member.roles.cache.some(role => role.name === 'Staff')) return null;
+        return command;
+      }).filter(command => command !== null);
+
+      const categoryEmbed = new EmbedBuilder()
+        .setTitle(`${categoryName.toUpperCase()} Commands`)
+        .setColor('#0099ff');
+
+      for (const command of filteredCommands) {
+        const commandName = command.data ? command.data.name : command.name;
+        const commandDescription = command.data ? command.data.description : command.description;
+        const commandAliases = command.aliases ? command.aliases.map(alias => `\`${alias}\``).join(', ') : '';
+        const commandCooldown = command.cooldown ? `${command.cooldown} seconds` : 'No cooldown';
+        const commandRole = command.role ? `${command.role}` : 'everyone';
+        const commandPermission = command.permission ? `${command.permission}` : 'No specific permission required';
+
+        let commandField = `**/${commandName}**\n${commandDescription}\n\n`;
+
+        if (command.data && command.data.options && command.data.options.length > 0) {
+          const subcommands = command.data.options.filter(option => option.type === 1);
+
+          if (subcommands.length > 0) {
+            let subcommandsText = '';
+
+            subcommands.forEach(subcommand => {
+              subcommandsText += `\n- \`/${commandName} ${subcommand.name}\`: ${subcommand.description}`;
+            });
+
+            commandField += `Subcommands:${subcommandsText}\n\n`;
+          }
+        }
+
+        commandField += `Aliases: ${commandAliases}\nCooldown: ${commandCooldown}\nRole: ${commandRole}\nPermission: ${commandPermission}`;
+
+        if (currentEmbedFields.length + commandField.length > 5000) {
+          helpEmbeds.push(categoryEmbed);
+          currentEmbedFields = [];
+          categoryEmbed.setDescription('Here is a list of available commands in the category:');
+        }
+
+        categoryEmbed.addFields({ name: `/${commandName}`, value: commandField });
+        currentEmbedFields.push(commandField);
+      }
+
+      // Add custom placeholder commands
+      categoryEmbed.addFields({
+        name: 'Custom Placeholders',
+        value: `
+          \`/create-custom-placeholder\` - Create a new custom placeholder
+          \`/edit-custom-placeholder\` - Edit an existing custom placeholder
+          \`/delete-custom-placeholder\` - Delete a custom placeholder
+        `,
+      });
+
+      helpEmbeds.push(categoryEmbed);
+    }
+
+    if (helpEmbeds.length === 0) {
+      return interaction.reply({ content: 'No available commands for your permissions.', ephemeral: true });
+    }
+
+    let currentPage = 0;
+    const embeds = helpEmbeds.map(embed => embed.setFooter({ text: `Page ${helpEmbeds.indexOf(embed) + 1} of ${helpEmbeds.length}` }));
+
+    const previousButton = new ButtonBuilder()
+      .setCustomId('previous')
+      .setLabel('Previous')
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true);
+
+    const nextButton = new ButtonBuilder()
+      .setCustomId('next')
+      .setLabel('Next')
+      .setStyle(ButtonStyle.Primary);
+
+    const actionRow = new ActionRowBuilder().addComponents(previousButton, nextButton);
+
+    const message = await interaction.reply({ embeds: [embeds[0]], components: [actionRow] });
+
+    const filter = i => i.customId === 'previous' || i.customId === 'next';
+    const collector = message.createMessageComponentCollector({ filter, time: 60000 });
+
+    collector.on('collect', async i => {
+      if (i.customId === 'previous') {
+        currentPage--;
+      } else {
+        currentPage++;
+      }
+
+      previousButton.setDisabled(currentPage === 0);
+      nextButton.setDisabled(currentPage === embeds.length - 1);
+
+      await i.update({ embeds: [embeds[currentPage]], components: [actionRow] });
+    });
+
+    collector.on('end', async () => {
+      previousButton.setDisabled(true);
+      nextButton.setDisabled(true);
+      await interaction.editReply({ components: [actionRow] });
+    });
   },
 };
-
-async function sendCategoryHelpEmbed(interaction, message, categoryName) {
-  console.log('Sending category help embed');
-
-  const categoryPath = path.join(__dirname, '..', categoryName);
-  const commandFiles = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
-
-  const user = interaction ? interaction.user : message ? message.author : null;
-  const member = interaction ? interaction.member : message ? message.member : null;
-  const isAdmin = member ? member.permissions.has('ADMINISTRATOR') : false;
-  const isOwner = interaction && interaction.client.application.owner ? interaction.client.application.owner.id === user.id : false;
-
-  const filteredCommands = commandFiles.map(file => {
-    const command = require(path.join(categoryPath, file));
-    if (command.ownerOnly && !isOwner) return null;
-    if (command.adminOnly && !isAdmin) return null;
-    if (command.staffOnly && member && !member.roles.cache.some(role => role.name === 'Staff')) return null;
-    return command;
-  }).filter(command => command !== null);
-
-  console.log('Filtered Commands:', filteredCommands);
-
-  const helpEmbed = new EmbedBuilder()
-    .setTitle(`${categoryName.toUpperCase()} Commands`)
-    .setDescription(`Here is a list of available commands in the ${categoryName} category:`)
-    .setColor('#0099ff')
-    .setFooter({ text: `Support for ${interaction ? interaction.client.user.tag : message ? message.client.user.tag : 'Unknown'} at **!support**` })
-    .setTimestamp();
-
-  filteredCommands.forEach(command => {
-    const commandName = command.data ? command.data.name : command.name;
-    const commandDescription = command.data ? command.data.description : command.description;
-    const commandAliases = command.aliases ? command.aliases.map(alias => `\`${alias}\``).join(', ') : '';
-    const commandCooldown = command.cooldown ? `${command.cooldown} seconds` : 'No cooldown';
-    const commandRole = command.role ? `${command.role}` : 'everyone';
-    const commandPermission = command.permission ? `${command.permission}` : 'No specific permission required';
-
-    if (command.data && command.data.options && command.data.options.length > 0) {
-      const subcommands = command.data.options.filter(option => option.type === 1);
-
-      if (subcommands.length > 0) {
-        let subcommandsText = '';
-
-        subcommands.forEach(subcommand => {
-          subcommandsText += `\n- \`/${commandName} ${subcommand.name}\`: ${subcommand.description}`;
-        });
-
-        helpEmbed.addFields({
-          name: `/${commandName}`,
-          value: `${commandDescription}\n\nSubcommands:${subcommandsText}\n\nAliases: ${commandAliases}\nCooldown: ${commandCooldown}\nRole: ${commandRole}\nPermission: ${commandPermission}`
-        });
-      } else {
-        helpEmbed.addFields({
-          name: `/${commandName}`,
-          value: `${commandDescription}\n\nAliases: ${commandAliases}\nCooldown: ${commandCooldown}\nRole: ${commandRole}\nPermission: ${commandPermission}`
-        });
-      }
-    } else {
-      helpEmbed.addFields({
-        name: `!${commandName}`,
-        value: `${commandDescription}\n\nAliases: ${commandAliases}\nCooldown: ${commandCooldown}\nRole: ${commandRole}\nPermission: ${commandPermission}`
-      });
-    }
-  });
-
-  // Add custom placeholder commands
-  helpEmbed.addFields({
-    name: 'Custom Placeholders',
-    value: `
-      \`/create-custom-placeholder\` - Create a new custom placeholder
-      \`/edit-custom-placeholder\` - Edit an existing custom placeholder
-      \`/delete-custom-placeholder\` - Delete a custom placeholder
-    `,
-  });
-
-  if (interaction) {
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({ embeds: [helpEmbed] });
-    } else {
-      await interaction.reply({ embeds: [helpEmbed] });
-    }
-  } else if (message) {
-    await message.channel.send({ embeds: [helpEmbed] });
-  }
-}
-
-async function sendCategorySelectMenu(interaction, message, categories) {
-  console.log('Creating category select menu');
-
-  if (categories.length === 0) {
-    console.log('No valid categories found');
-    if (interaction) {
-      return interaction.reply({ content: 'No command categories available.', ephemeral: true });
-    } else if (message) {
-      return message.reply('No command categories available.');
-    }
-  }
-
-  const selectMenu = new StringSelectMenuBuilder()
-    .setCustomId('help_category_select')
-    .setPlaceholder('Select a category')
-    .setOptions(
-      categories.map(category => ({
-        label: category.charAt(0).toUpperCase() + category.slice(1),
-        value: category,
-      }))
-    );
-
-  console.log('Select Menu:', selectMenu);
-
-  const actionRow = new ActionRowBuilder().addComponents(selectMenu);
-
-  console.log('Action Row:', actionRow);
-
-  let reply;
-  if (interaction) {
-    if (interaction.replied || interaction.deferred) {
-      reply = await interaction.followUp({
-        content: 'Please select a category to view commands:',
-        components: [actionRow],
-        ephemeral: true,
-        fetchReply: true,
-      });
-    } else {
-      reply = await interaction.reply({
-        content: 'Please select a category to view commands:',
-        components: [actionRow],
-        ephemeral: true,
-        fetchReply: true,
-      });
-    }
-  } else if (message) {
-    reply = await message.channel.send({
-      content: 'Please select a category to view commands:',
-      components: [actionRow],
-    });
-  }
-
-  if (!reply) {
-    console.log('Failed to send category select menu');
-    return;
-  }
-
-  const filter = i => {
-    if (i.customId === 'help_category_select') {
-      if (interaction && i.user.id === interaction.user?.id) {
-        return true;
-      } else if (message && i.user.id === message.author?.id) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const collector = reply.createMessageComponentCollector({ filter, time: 60000 });
-
-  collector.on('collect', async i => {
-    console.log('Category selected:', i.values[0]);
-
-    const selectedCategory = i.values[0];
-
-    await i.update({ content: 'Loading category commands...', components: [] });
-    await sendCategoryHelpEmbed(interaction, message, selectedCategory);
-  });
-
-  collector.on('end', async (collected, reason) => {
-    if (reason === 'time') {
-      console.log('Help menu timed out');
-
-      if (reply.editable) {
-        await reply.edit({ content: 'Help menu timed out.', components: [] });
-      }
-    }
-  });
-}

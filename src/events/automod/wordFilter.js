@@ -1,5 +1,4 @@
-const { ModSettings } = require('../../database/models');
-
+const { Warnings, ModSettings } = require('../../database/models');
 
 module.exports = {
   name: 'messageCreate',

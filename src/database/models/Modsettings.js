@@ -1,4 +1,4 @@
-const { sequelize, DataTypes } = require('./database');
+const { sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
     const ModSettings = sequelize.define('ModSettings', {
