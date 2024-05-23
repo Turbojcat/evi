@@ -1,4 +1,7 @@
 const { connectDatabase } = require('./database');
+const Warnings = require('./Warnings')(sequelize, DataTypes);
+const ModSettings = require('./ModSettings')(sequelize, DataTypes);
+
 
 async function createUserTable() {
   const connection = await connectDatabase();
@@ -60,4 +63,6 @@ module.exports = {
   createUserTable,
   createUser,
   getUserByDiscordId,
+  Warnings,
+  ModSettings,
 };

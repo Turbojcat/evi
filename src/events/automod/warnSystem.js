@@ -1,4 +1,7 @@
-const { Warnings, ModSettings } = require('../../database/models');
+const { sequelize, DataTypes } = require('../../database/database');
+const Warnings = require('../../database/models/Warnings')(sequelize, DataTypes);
+const ModSettings = require('../../database/models/ModSettings')(sequelize, DataTypes);
+
 
 
 module.exports = {
