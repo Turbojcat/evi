@@ -1,6 +1,6 @@
 const { loadTicketCategory } = require('../../commands/ticket/ticketcategory');
-const { syncDatabase } = require('../database/database');
-const { TicketLog } = require('../database/connection');
+const { syncDatabase } = require('../../database/database');
+const { TicketLog } = require('../../database/connection');
 
 module.exports = {
   name: 'ready',

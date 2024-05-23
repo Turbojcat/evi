@@ -153,6 +153,7 @@ async function syncDatabase() {
   try {
     await sequelize.sync();
     console.log('Database models synced');
+    await ModAction.sync();
   } catch (error) {
     console.error('Error syncing database models:', error);
   }
@@ -163,4 +164,5 @@ module.exports = {
   syncDatabase,
   sequelize,
   ...models,
+  ModAction,
 };

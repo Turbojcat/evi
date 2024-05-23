@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const { ModAction } = require('../../database/models/ModAction');
+const { ModAction } = require('../../database/connection');
 const { ModSettings } = require('../../database/models/ModSettings');
 
 module.exports = {

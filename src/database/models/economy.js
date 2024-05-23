@@ -1,6 +1,6 @@
 // src/database/models/economy.js
 const { DataTypes } = require('sequelize');
-const { sequelize } = require('../connection');
+const { sequelize } = require('../database');
 
 const Economy = sequelize.define('Economy', {
   id: {
