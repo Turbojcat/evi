@@ -1,6 +1,7 @@
 // src/database/connection.js
 const { Sequelize } = require('sequelize');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = require('../config');
+const { TicketLog } = require('./models/TicketLog');
 
 async function connectDatabase() {
   const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
@@ -36,4 +37,7 @@ async function syncDatabase(sequelize) {
 
 module.exports = {
   connectDatabase,
+  syncDatabase,
+  sequelize,
+  TicketLog,
 };
