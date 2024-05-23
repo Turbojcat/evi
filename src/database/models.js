@@ -1,14 +1,14 @@
 console.log('Importing connectDatabase...');
 const { connectDatabase } = require('./database');
 
+console.log('Importing sequelize...');
+const { sequelize, DataTypes } = require('./database');
+
 console.log('Importing Warnings...');
 const Warnings = require('./Warnings')(sequelize, DataTypes);
 
 console.log('Importing ModSettings...');
 const ModSettings = require('./ModSettings')(sequelize, DataTypes);
-
-console.log('Importing sequelize...');
-const { sequelize } = require('./database');
 
 console.log('Importing User...');
 const User = require('./User')(sequelize);
