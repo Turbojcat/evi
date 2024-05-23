@@ -1,20 +1,19 @@
 // src/database/database.js
 const { Sequelize, DataTypes } = require('sequelize');
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = require('../config');
-const User = require('./models/User')
-const Ticket = require('./models/Ticket')
-const TicketQuestion = require('./models/TicketQuestion')
-const TicketResponse = require('./models/TicketResponse')
-const TicketStaffRole = require('./models/TicketStaffRole')
-const TicketLog = require('./models/TicketLog')
-const TicketTranscript = require('./models/TicketTranscript')
-const TicketCategory = require('./models/TicketCategory')
-const PremiumUser = require('./models/PremiumUser')
-const ModLogChannel = require('./models/ModLogChannel')
-const ModAlertChannel = require('./models/ModAlertChannel')
-const CustomPlaceholder = require('./models/CustomPlaceholder')
-const ModAction = require('./models/ModAction')
-
+const User = require('./models/User')(sequelize, DataTypes);
+const Ticket = require('./models/Ticket')(sequelize, DataTypes);
+const TicketQuestion = require('./models/TicketQuestion')(sequelize, DataTypes);
+const TicketResponse = require('./models/TicketResponse')(sequelize, DataTypes);
+const TicketStaffRole = require('./models/TicketStaffRole')(sequelize, DataTypes);
+const TicketLog = require('./models/TicketLog')(sequelize, DataTypes);
+const TicketTranscript = require('./models/TicketTranscript')(sequelize, DataTypes);
+const TicketCategory = require('./models/TicketCategory')(sequelize, DataTypes);
+const PremiumUser = require('./models/PremiumUser')(sequelize, DataTypes);
+const ModLogChannel = require('./models/ModLogChannel')(sequelize, DataTypes);
+const ModAlertChannel = require('./models/ModAlertChannel')(sequelize, DataTypes);
+const CustomPlaceholder = require('./models/CustomPlaceholder')(sequelize, DataTypes);
+const ModAction = require('./models/ModAction')(sequelize, DataTypes);
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
