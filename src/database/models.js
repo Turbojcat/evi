@@ -1,8 +1,19 @@
 const { connectDatabase } = require('./database');
 const Warnings = require('./Warnings')(sequelize, DataTypes);
 const ModSettings = require('./ModSettings')(sequelize, DataTypes);
-
-
+const { sequelize } = require('./database');
+const User = require('./User')(sequelize);
+const Ticket = require('./Ticket')(sequelize);
+const TicketQuestion = require('./TicketQuestion')(sequelize);
+const TicketResponse = require('./TicketResponse')(sequelize);
+const TicketStaffRole = require('./TicketStaffRole')(sequelize);
+const TicketLog = require('./TicketLog')(sequelize);
+const TicketTranscript = require('./TicketTranscript')(sequelize);
+const TicketCategory = require('./TicketCategory')(sequelize);
+const PremiumUser = require('./PremiumUser')(sequelize);
+const ModLogChannel = require('./ModLogChannel')(sequelize);
+const ModAlertChannel = require('./ModAlertChannel')(sequelize);
+const CustomPlaceholder = require('./CustomPlaceholder')(sequelize);
 async function createUserTable() {
   const connection = await connectDatabase();
 
@@ -63,6 +74,19 @@ module.exports = {
   createUserTable,
   createUser,
   getUserByDiscordId,
+  User,
   Warnings,
   ModSettings,
+  ModAction,
+  Ticket,
+  TicketQuestion,
+  TicketResponse,
+  TicketStaffRole,
+  TicketLog,
+  TicketTranscript,
+  TicketCategory,
+  PremiumUser,
+  ModLogChannel,
+  ModAlertChannel,
+  CustomPlaceholder,
 };
