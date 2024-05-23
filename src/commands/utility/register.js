@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { createUserTable, createUser, getUserByDiscordId } = require('../../database/models/user');
+const { createUserTable, createUser, getUserByDiscordId } = require('../../database/userFunctions');
+const { User } = require('../../database/database');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,9 +22,9 @@ module.exports = {
       }
 
       // Create a new user in the database
-      await createUser(user.id, user.username);
+      const newUser = await createUser(user.id, user.username);
 
-      await interaction.reply('Registration successful!');
+      await interaction.reply(`Registration successful! Your user ID is: ${newUser.id}`);
     } catch (error) {
       console.error('Error during registration:', error);
       await interaction.reply('An error occurred during registration. Please try again later.');
