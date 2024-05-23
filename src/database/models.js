@@ -1,19 +1,51 @@
+console.log('Importing connectDatabase...');
 const { connectDatabase } = require('./database');
+
+console.log('Importing Warnings...');
 const Warnings = require('./Warnings')(sequelize, DataTypes);
+
+console.log('Importing ModSettings...');
 const ModSettings = require('./ModSettings')(sequelize, DataTypes);
+
+console.log('Importing sequelize...');
 const { sequelize } = require('./database');
+
+console.log('Importing User...');
 const User = require('./User')(sequelize);
+
+console.log('Importing Ticket...');
 const Ticket = require('./Ticket')(sequelize);
+
+console.log('Importing TicketQuestion...');
 const TicketQuestion = require('./TicketQuestion')(sequelize);
+
+console.log('Importing TicketResponse...');
 const TicketResponse = require('./TicketResponse')(sequelize);
+
+console.log('Importing TicketStaffRole...');
 const TicketStaffRole = require('./TicketStaffRole')(sequelize);
+
+console.log('Importing TicketLog...');
 const TicketLog = require('./TicketLog')(sequelize);
+
+console.log('Importing TicketTranscript...');
 const TicketTranscript = require('./TicketTranscript')(sequelize);
+
+console.log('Importing TicketCategory...');
 const TicketCategory = require('./TicketCategory')(sequelize);
+
+console.log('Importing PremiumUser...');
 const PremiumUser = require('./PremiumUser')(sequelize);
+
+console.log('Importing ModLogChannel...');
 const ModLogChannel = require('./ModLogChannel')(sequelize);
+
+console.log('Importing ModAlertChannel...');
 const ModAlertChannel = require('./ModAlertChannel')(sequelize);
+
+console.log('Importing CustomPlaceholder...');
 const CustomPlaceholder = require('./CustomPlaceholder')(sequelize);
+
 async function createUserTable() {
   const connection = await connectDatabase();
 
