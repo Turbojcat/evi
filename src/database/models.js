@@ -5,7 +5,8 @@ console.log('Importing sequelize...');
 const { sequelize, DataTypes } = require('./database');
 
 console.log('Importing Warnings...');
-const Warnings = require('./Warnings')(sequelize, DataTypes);
+const WarningsModule = require('./Warnings');
+const Warnings = WarningsModule(sequelize, DataTypes);
 
 console.log('Importing ModSettings...');
 const ModSettings = require('./ModSettings')(sequelize, DataTypes);
